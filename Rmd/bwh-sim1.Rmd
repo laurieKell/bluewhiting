@@ -1,0 +1,381 @@
+---
+title: "Blue whiting Operating Model"
+subtitle: "Beverton and Holt SRR with steepess fixed at 0.9"
+author: "Laurence Kell"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+    word_document:
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEncoding{UTF-8}
+tags: FLPKG FLR
+license: Creative Commons Attribution-ShareAlike 4.0 International
+---
+# Notes
+
+
+```{r knitr_init, echo=FALSE, results="hide"}
+library(knitr)
+## Global options
+opts_chunk$set(echo    =FALSE,
+               eval    =TRUE,
+               cache   =TRUE,
+               cache.path="cache/sim1/",
+               prompt  =FALSE,
+               comment =NA,
+               message =FALSE,
+               tidy    =FALSE,
+               warning =FALSE,
+               fig.height=4.5,
+               fig.width =8,
+               fig.path  ="tex/sim1-")
+
+options(digits=3)
+```
+```{r, pkgs, echo=FALSE, message=FALSE}
+library(FLCore)
+library(ggplotFL)
+library(FLfse)
+library(kobe)
+library(TMB)
+library(stockassessment)
+library(FLBRP)
+library(FLasher)
+
+library(plyr)
+library(reshape)
+library(magrittr)
+
+theme_set(theme_bw(16))
+```
+```{r, dirs, echo=FALSE, message=FALSE}
+#dirMy =dirname(dirname(FLife:::getScriptPath()))
+dirMy="/home/laurence/Desktop/Dropbox/PELAC/bluewhiting"
+dirDat=file.path(dirMy,"data")
+```
+```{r}
+source(file.path(dirMy,"R/lFig.R"))
+iFig=25
+```
+```{r}
+refpts=FLPar(c(
+  blim    =1500000,
+  bpa     =2250000,
+  flim    =0.88,
+  fpa     =0.53,
+  msytrig =2250000,
+  fmsy    =0.32,
+  bmgtlow =1500000,
+  bmgt    =2250000,
+  fmgstlow=0.05,
+  fmgt    =0.32),units="NA")
+```
+
+```{r, smry}
+load(file.path(dirDat,"data/sims.RData"))   
+```
+
+```{r, fig.height=8,fig.width=8}
+plot(FLStocks("ICES"     =iter(sims[["ICES"]][[1]],1),
+              "Fmsy"     =iter(sims[["fmsy"]][[1]],1),
+              "HCR(Fmsy)"=iter(sims[["sim0.0"]][[1]],1)))+
+  theme_bw()+
+  theme(legend.position="bottom")+
+  scale_colour_manual("",values=rainbow(10)[c(1,3,5)])
+```
+
+**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+
+
+```{r, fig.height=8,fig.width=8}
+plot(FLStocks("Fmsy"=sims[["fmsy"]][[1]],
+              "HCR(Fmsy)"=sims[["sim0.0"]][[1]],
+              "HCR(Fmsy) with Ass. Error"=sims[["sim0"]][[1]]))+
+  theme_bw()+
+  theme(legend.position="bottom")+
+  scale_colour_manual("Management",values=rainbow(3))
+```
+
+**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+
+```{r, fig.height=8,fig.width=8}
+plot(FLStocks("HCR I" =sims[["sim1"]][[1]],
+              "HCR II"=sims[["sim2"]][[1]]))+
+  theme_bw()+
+  theme(legend.position="bottom")+
+  scale_colour_manual("Management",values=rainbow(3))
+```
+
+**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+
+```{r, fig.height=8,fig.width=8}
+plot(FLStocks("HCR I" =sims[["sim1_bnd"]][[1]],  
+              "HCR II"=sims[["sim2_bnd"]][[1]]))+ 
+  theme_bw()+
+  theme(legend.position="bottom")+
+  scale_colour_manual("Management",values=rainbow(3))
+```
+
+**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+
+```{r, fig.height=8,fig.width=8}
+plot(FLStocks("HCR I" =sims[["acf1"]][[1]],
+              "HCR II"=sims[["acf2"]][[1]]))+ 
+  theme_bw()+
+  theme(legend.position="bottom")+
+  scale_colour_manual("Management",values=rainbow(2))+
+  scale_fill_manual(values=rainbow(2))
+```
+
+**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+
+```{r}
+#Time series with quantiles for stock, recruitment, catch, ... 
+
+### Summary stats
+series<-function(object,start,end){
+  res=FLQuants(window(object,start=start,end=end),
+               catch  =catch,
+               ssb    =ssb,
+               biomass=computeStock,
+               juve   =function(x) computeStock(x)-ssb(x),
+               esb    =function(x) apply((stock.n(x)%*%stock.wt(x))%/%
+                                         (harvest(x)%/%fbar(x)),c(2,6),sum),
+               rec    =rec,
+               f      =fbar)
+  res}
+
+qtl=ldply(sims[-(1:2)],function(x)
+  ldply(series(x[[1]],start=2000,end=2018),function(x) 
+    as.data.frame(quantile(x,c(0.025,0.25,0.5,0.75,0.975)),drop=TRUE)))
+qtl=cbind(Scenario=rep(names(sims[-(1:2)]),each=dim(qtl)[1]/10),qtl)
+names(qtl)[2]="Quantity"
+qtl$Quantity=factor(qtl$Quantity,                    levels=c("rec","ssb","biomass","juve","f","catch","esb"),
+labels=c("Rec","SSB","Biomass","juvenile","F","Catch","Exploitable Biomass"))
+```
+
+```{r}
+#Inter-Annual Variability for stock, recruitment, catch,...
+aav=mdply(names(sims)[-(1:2)],function(x)
+            ldply(series(sims[[x]][[1]],start=2000,end=2018),
+              function(x) adply(x,6, function(x) 
+                data.frame(aav=mean(abs((x[-1]-x[-length(x)])/x[-1]))))))
+aav$Scenario=names(sims[-(1:2)])[aav$X1]
+aav=aav[,-1]
+names(aav)[1]="Quantity"
+aav$Quantity=factor(aav$Quantity,                    levels=c("rec","ssb","biomass","juve","f","catch","esb"),
+labels=c("Rec","SSB","Biomass","juvenile","F","Catch","Exploitable Biomass"))
+```
+
+```{r}
+## Check
+chk=ldply(sims[c("sim1","sim2","sim1_bnd","sim2_bnd","acf1","acf2")], function(x) x[[2]]) 
+names(chk)[1:2]=c("Scenario","year")
+```
+
+
+```{r, ts1, fig.height=8, fig.width=12}
+its=ldply(sims[-(1:2)],function(x)
+  ldply(series(x[[1]],start=2000,end=2018),function(x) 
+    as.data.frame(iter(x,7),drop=TRUE)))
+its=cbind(Scenario=rep(names(sims[-(1:2)]),each=dim(its)[1]/10),its)
+names(its)[2]="Quantity"  
+its$Quantity=factor(its$Quantity,
+                    levels=c("rec","ssb","biomass","juve","f","catch","esb"),
+                    labels=c("Rec","SSB","Biomass","juvenile","F","Catch","Exploitable Biomass"))
+
+ggplot(cast(subset(qtl,Scenario%in%c("sim0","sim1","sim2")),Scenario+year+Quantity~iter))+
+  geom_ribbon(aes(year,ymin=`25%`, ymax=`75%`),alpha=.5,fill="red")+
+  geom_ribbon(aes(year,ymin=`2.5%`,ymax=`97.5%`),alpha=.1,fill="red")+
+  geom_line(  aes(year,`50%`))+
+  geom_line(  aes(year,data),col="blue",size=0.3,
+              data=subset(its,Scenario%in%c("sim0","sim1","sim2")))+
+  facet_grid(Quantity~Scenario,scale="free")+
+  theme_bw(16)+
+  xlab("Year")+ylab("")
+```
+**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+
+```{r, tcatch}
+#Total catch quantiles and AAVs by scenario 
+tcsm=ldply(sims, function(x) adply(window(catch(x[[1]]),start=2002,end=2018),6,sum))
+
+tcvr=ldply(sims, function(x) adply(window(catch(x[[1]]),start=2002,end=2018),6,var))
+
+tcav=ldply(sims, function(x) adply(window(catch(x[[1]]),start=2001,end=2018),6,
+                              function(x) mean(abs((x[-1]-x[-length(x)])/x[-1]))))
+
+tc  =cbind(tcsm[,1:2],total=tcsm[,3],aav=tcav[,3],var=tcvr[,3])
+names(tc)[1]="Scenario"
+```
+
+```{r, chk1, fig.height=8,fig.width=8}
+ggplot(subset(chk,Scenario%in%c("sim1","sim2")))+   
+  geom_vline(aes(xintercept=c(par2[c("btrig"),"upper"])),linetype=2,size=.2)+
+  geom_vline(aes(xintercept=c(par2[c("btrig"),"lower"])),linetype=2,size=.2)+
+  geom_vline(aes(xintercept=c(par2[c("blim"), "upper"])),linetype=2,size=.2)+
+  geom_vline(aes(xintercept=c(par2[c("blim"), "lower"])),linetype=2,size=.2)+
+  geom_hline(aes(yintercept=c(par2[c("ftar"), "lower"])),linetype=2,size=.2)+
+  geom_hline(aes(yintercept=c(par2[c("ftar"), "upper"])),linetype=2,size=.2)+
+  geom_hline(aes(yintercept=c(par1[c("fmin")])),linetype=2,size=.2)+
+  geom_point(aes(ssb,f),col="red")+
+  expand_limits(x=0, y=0)+
+  scale_x_continuous(limits=c(0,0.75e7))+
+  facet_grid(Scenario~.)+
+  theme_bw(16)+
+  xlab("SSB")+ylab("F")
+```
+**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+
+
+```{r}
+library(grid)
+source('/home/laurence/Desktop/Dropbox/PELAC/bluewhiting/R/kobe-phase.R')
+source('/home/laurence/Desktop/Dropbox/PELAC/bluewhiting/R/kobe-phaseMar.R')
+
+bref=c(par2[c("btrig"),"upper"],
+       par2[c("btrig"),"lower"],
+       par2[c("blim"), "upper"],
+       par2[c("blim"), "lower"])
+
+fref=c(par2[c("ftar"), "lower"],
+       par2[c("ftar"), "upper"],     
+       par1[c("fmin")])
+
+pts=ldply(sims,function(x)
+  model.frame(FLQuants(window(x[[1]],start=2000,end=2018),                "stock"=ssb,"harvest"=fbar),drop=T))[,c(4:5,1,2)]
+names(pts)[3]="run"
+save(pts,file=file.path(dirDat,"pts.RData"))
+```
+
+```{r, fig.height=10, fig.width=10}
+kobePhase(subset(pts,run=="sim0.0"),ylim=c(0,1),
+          quadcol=rep(c("white"),4))+ 
+  facet_wrap(~year)+
+  geom_point(aes(ssb,f),col="red",size=.1,
+           data=subset(chk,Scenario%in%c("acf1"))[,c("ssb","f")])+ 
+  geom_point(aes(stock,harvest),size=.3,fill="cyan",colour="blue",shape=23)+
+  xlab("SSB")+ylab("F")+
+  scale_y_continuous(limit=c(0,1))
+```
+
+**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]`  
+
+```{r, fig.height=10, fig.width=10}
+kobePhase(subset(pts,run=="sim1"),ylim=c(0,1),
+          quadcol=rep(c("white"),4))+ 
+  facet_wrap(~year)+
+  geom_point(aes(ssb,f),col="red",size=.1,
+           data=subset(chk,Scenario%in%c("acf1"))[,c("ssb","f")])+
+  geom_point(aes(stock,harvest),size=.3,fill="cyan",colour="blue",shape=23)+
+  xlab("SSB")+ylab("F")+
+  scale_y_continuous(limit=c(0,1))
+```
+
+**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]`  
+
+```{r, fig.height=10, fig.width=10}
+kobePhase(subset(pts,run=="sim2"),ylim=c(0,1),
+          quadcol=rep(c("white"),4))+
+  facet_wrap(~year)+
+  geom_point(aes(ssb,f),col="red",size=.1,
+           data=subset(chk,Scenario%in%c("acf2"))[,c("ssb","f")])+
+  geom_point(aes(stock,harvest),size=.3,fill="cyan",colour="blue",shape=23)+
+  xlab("SSB")+ylab("F")+
+  scale_y_continuous(limit=c(0,1))
+```
+
+**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]`
+
+```{r, fig.height=10, fig.width=10}
+library(grid)
+source('/home/laurence/Desktop/Dropbox/PELAC/bluewhiting/R/kobe-phase.R')
+source('/home/laurence/Desktop/Dropbox/PELAC/bluewhiting/R/kobe-phaseMar.R')
+
+bref=c(par2[c("btrig"),"upper"],
+       par2[c("btrig"),"lower"],
+       par2[c("blim"), "upper"],
+       par2[c("blim"), "lower"])
+
+fref=c(par2[c("ftar"), "lower"],
+       par2[c("ftar"), "upper"],     
+       par1[c("fmin")])
+
+kobePhaseMar2(subset(pts,year==2012&run=="sim1"),xlim=c(0,1e7),ylim=c(0,1),
+              quadcol=rep(c("white"),4),
+              bref=par1["blim"],fref=par1["ftar"],layer=
+geom_point(aes(ssb,f),col="red",size=.2,
+           data=subset(chk,Scenario%in%c("acf1"))), 
+xlab="SSB",ylab="F")  
+```
+
+**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]`  
+
+
+```{r, fig.height=10, fig.width=10}
+kobePhaseMar2(subset(pts,year==2012&run=="sim2"),xlim=c(0,1e7),ylim=c(0,1),quadcol=rep(c("white"),4),
+              bref=par1["blim"],fref=par1["ftar"],layer=
+geom_point(aes(ssb,f),col="red",size=.2,
+           data=subset(chk,Scenario%in%c("acf2"))), 
+xlab="SSB",ylab="F")  
+```
+
+**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]`  
+
+```{r, tc, fig.width=8,fig.height=8}
+ggplot(melt(subset(tc,Scenario%in%c("ICES","fmsy","sim1","sim2","sim1_bnd","sim2_bnd")),
+            id=c("Scenario","iter")))+
+  geom_boxplot(aes(Scenario,value))+
+  facet_grid(variable~.,scale="free")+
+  theme_bw(16)+
+  ylab("")
+```
+**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+
+
+```{r, aav1, fig.height=12, fig.width=8}
+ggplot(subset(aav,Scenario%in%c("sim1","sim2","sim1_bnd","sim2_bnd")&
+                  Quantity%in%c("SSB","F","Catch")))+
+  geom_boxplot(aes(Scenario,aav))+
+  facet_grid(Quantity~.,scale="free")+
+  theme_bw(16)+
+  ylab("AAV")
+```
+**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+
+```{r, stab1}
+dat<-chk%>% 
+      subset(ssb>par2["blim","lower"]&Scenario%in%c("sim1","sim2","sim1_bnd","sim2_bnd"))%>% 
+      with(table(Scenario,year))%>%
+      melt
+
+fmt_dcimals <- function(decimals=0){
+   # return a function responpsible for formatting the 
+   # axis labels with a given number of decimals 
+   function(x) as.character(round(x,decimals))}
+
+ggplot(dat)+
+  geom_line(aes(year,value,col=Scenario))+
+  theme_bw(16)+
+  theme(legend.position="bottom" )+
+  scale_y_continuous(labels=scales::percent_format(accuracy=0.1))+
+  xlab("Year")+ylab("Stability Mechanism Applied")
+```
+**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+
+**Table 1** 
+```{r, tab1}
+hcr1=subset(chk,Scenario%in%c("sim1","sim1_bnd","acf1"))  
+with(cbind(hcr1,cut=cut(hcr1$ssb,c(0,par1["blim"],par1["btrig"],Inf))),table(Scenario,cut))
+
+hcr2=subset(chk,Scenario%in%c("sim2","sim2_bnd","acf2"))
+with(cbind(hcr1,cut=cut(hcr2$ssb,c(0,par2["blim","lower"],par2["btrig","lower"],par2["blim","upper"],par2["btrig","upper"],Inf))),table(Scenario,cut))
+```
+
+
+```{r}
+save(its,qtl,pts,aav,tc,file=file.path(dirDat,"smryStats1.RData"),compress="xz")
+```
+
+

@@ -1,0 +1,472 @@
+---
+title: "Blue whiting HCR Evaluation"
+author: "Laurence Kell & Polina Levontin"
+date: "July 29, 2019"
+output: ioslides_presentation
+---
+
+```{r knitr_init, echo=FALSE, results="hide"}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(knitr)
+## Global options
+opts_chunk$set(echo    =FALSE,
+               eval    =TRUE,
+               cache   =TRUE,
+               cache.path="cache/stakeholder/",
+               prompt  =FALSE,
+               comment =NA,
+               message =FALSE,
+               tidy    =FALSE,
+               warning =FALSE,
+               fig.height=4.5,
+               fig.width =8,
+               fig.path  ="tex/stakeholder-")
+
+options(digits=3)
+```
+
+```{r}
+library(FLCore)
+library(ggplotFL)
+library(plyr)
+library(kobe)
+library(grid)
+library(png)
+
+dirDat="/home/laurence/Desktop/Dropbox/PELAC/bluewhiting/data"
+load(file.path(dirDat,"om.RData"))
+```
+
+## Outline
+
++ Objectives
++ Approach
++ Example Results
++ Summary
++ Questions
++ Next Steps
+
+
+# Objectives
+## Objectives
+
++ Evaluate alternative HCRs that  can achieve both sustainability and economic objectives.
++ Compare to historical management using a hindcast
+
+# Blue Whiting 
+
+## Large variability in assessment results between years
+
+```{r, retro}
+load(file.path(dirDat,"retro.RData"))
+p=plot(FLStocks(llply(retro,function(x) window(x,start=2001))))+
+  theme_bw()+
+  theme(legend.position="none")
+p$data=subset(p$data,qname!="Catch")
+p
+```
+
+## Variablity in recruitment 
+
+```{r}
+plot(rec(om1)/1e3)+
+  theme_bw()+xlab("Year")+ylab("Recruits (1000s)")
+```
+
+## Year-class strength
+
+```{r, stkn, fig.height=4, fig.width=8}
+dat=stock.n(om1)%/%apply(stock.n(om1),1,mean)
+ggplot(as.data.frame(dat))+
+  geom_point(aes(year,age,size=data))+
+  theme_bw(16)+
+  theme(legend.position="none")+
+  xlab("Year")+ylab("Age")
+```
+
+## Stock Recruitment Relationship
+```{r, fig.height=6, echo=FALSE}
+grid.raster(readPNG("/home/laurence/Desktop/Dropbox/PELAC/bluewhiting/R/tex/om-bhsv-1.png"))
+```
+
+## Selection Pattern
+
+```{r}
+ggplot(as.data.frame((harvest(om1)%/%fbar(om1))[,c("2001","2010","2018")]))+
+  geom_line(aes(age,data,col=ac(year)))+
+  theme_bw()+xlab("Age")+ylab("Selectivity")+
+  scale_colour_manual("Year",values=rainbow(3))
+```
+
+## FMSY
+
+```{r, fig.height=6, echo=FALSE}
+grid.raster(readPNG("/home/laurence/Desktop/Dropbox/PELAC/bluewhiting/R/tex/sim1-unnamed-chunk-4-1.png"))
+```
+
+## Approach
+
+### The results depend on the assumptions
+### Are we happy?
+
+```{r}
+load(file.path(dirDat,"sims.RData"))
+chk=ldply(sims[c("sim1","sim2","sim1_bnd","sim2_bnd","acf1","acf2")], function(x) x[[2]]) 
+names(chk)[1:2]=c("Scenario","year")
+
+
+load(file.path(dirDat,"pts.RData"))
+
+refpts=FLPar(c(
+  blim    =1500000,
+  bpa     =2250000,
+  flim    =0.88,
+  fpa     =0.53,
+  msytrig =2250000,
+  fmsy    =0.32,
+  bmgtlow =1500000,
+  bmgt    =2250000,
+  fmgstlow=0.05,
+  fmgt    =0.32),units="NA")
+
+par1=array(c(ftar=refpts["fmsy"],btrig=refpts["msytrig"],fmin=FLPar(0.05),blim=refpts["blim"]),
+           dim=c(4),
+           dimnames=list(c("ftar","btrig","fmin","blim")))
+
+par2=array(c(0.20,2250000,
+             0.05,1500000,
+             0.32,5200000,
+             0.20,4000000),
+          dim=c(4,2),
+          dimnames=list(c("ftar","btrig","fmin","blim"),c("lower","upper")))[c(1,3,2,4),1:2]
+
+library(grid)
+source('/home/laurence/Desktop/Dropbox/PELAC/bluewhiting/R/kobe-phase.R')
+source('/home/laurence/Desktop/Dropbox/PELAC/bluewhiting/R/kobe-phaseMar.R')
+
+bref=c(par2[c("btrig"),"upper"],
+       par2[c("btrig"),"lower"],
+       par2[c("blim"), "upper"],
+       par2[c("blim"), "lower"])
+
+fref=c(par2[c("ftar"), "lower"],
+       par2[c("ftar"), "upper"],     
+       par1[c("fmin")])
+```
+
+# HCR
+
+```{r}
+fn1<-function(yr) {
+  kobePhaseMar2(subset(pts,year==yr&run=="sim1"),xlim=c(0,1e7),ylim=c(0,1),
+              quadcol=rep(c("white"),4),
+              bref=2250000,fref=0.32,layer=
+geom_point(aes(ssb,f),col="red",size=.2,
+           data=subset(chk,Scenario%in%c("acf1"))), 
+xlab="SSB",ylab="F")}  
+
+fnBnd<-function(yr) {
+  print(kobePhaseMar2(subset(pts,year==yr&
+            run%in%c("sim1","sim1_bnd")),
+            xlim=c(0,1e7),ylim=c(0,1),
+              quadcol=rep(c("white"),4),
+              bref=2250000,fref=0.32,layer=
+geom_point(aes(ssb,f),col="red",size=.2,
+           data=subset(chk,Scenario%in%c("acf1"))), 
+xlab="SSB",ylab="F"))}  
+```
+
+## 2001 
+```{r}
+fn1(2001) 
+```
+
+## 2002 
+```{r}
+fn1(2002) 
+```
+
+## 2003 
+```{r}
+fn1(2003) 
+```
+
+## 2004 
+```{r}
+fn1(2004) 
+```
+
+## 2005 
+```{r}
+fn1(2005) 
+```
+
+## 2006 
+```{r}
+fn1(2006) 
+```
+
+## 2007 
+```{r}
+fn1(2007) 
+```
+
+## Variablity in recruitment 
+
+```{r}
+plot(rec(om1)/1e3)+
+  theme_bw()+xlab("Year")+ylab("Recruits (1000s)")
+```
+
+## 2008 
+```{r}
+fn1(2008) 
+```
+
+## 2009 
+```{r}
+fn1(2009) 
+```
+
+## 2010 
+```{r}
+fn1(2010) 
+```
+
+## 2011 
+```{r}
+fn1(2012) 
+```
+
+## 2013 
+```{r}
+fn1(2013) 
+```
+
+## 2014 
+```{r}
+fn1(2014) 
+```
+
+## 2015 
+```{r}
+fn1(2015) 
+```
+
+## 2016 
+```{r}
+fn1(2016) 
+```
+
+## 2017 
+```{r}
+fn1(2017) 
+```
+
+## 2018 
+```{r}
+fn1(2018) 
+```
+
+# Bounds
+
+## 2001 
+```{r}
+fnBnd(2001) 
+```
+
+## 2002 
+```{r}
+fnBnd(2002) 
+```
+
+## 2003 
+```{r}
+fnBnd(2003) 
+```
+
+## 2004 
+```{r}
+fnBnd(2004) 
+```
+
+## 2005 
+```{r}
+fnBnd(2005) 
+```
+
+## 2006 
+```{r}
+fnBnd(2006) 
+```
+
+## 2007 
+```{r}
+fnBnd(2007) 
+```
+
+## 2008 
+```{r}
+fnBnd(2008) 
+```
+
+## 2009 
+```{r}
+fnBnd(2009) 
+```
+
+## 2010 
+```{r}
+fnBnd(2010) 
+```
+
+## 2011 
+```{r}
+fnBnd(2012) 
+```
+
+## 2013 
+```{r}
+fnBnd(2013) 
+```
+
+## 2014 
+```{r}
+fnBnd(2014) 
+```
+
+## 2015 
+```{r}
+fnBnd(2015) 
+```
+
+## 2016 
+```{r}
+fnBnd(2016) 
+```
+
+## 2017 
+```{r}
+fnBnd(2017) 
+```
+
+## 2018 
+```{r}
+fnBnd(2018) 
+```
+
+## I v II
+```{r}
+fn12<-function(yr) {
+  print(kobePhaseMar2(subset(pts,year==yr&
+            run%in%c("sim1","sim2")),
+            xlim=c(0,1e7),ylim=c(0,1),
+              quadcol=rep(c("white"),4),
+              bref=2250000,fref=0.32,layer=
+geom_point(aes(ssb,f,fill=run),size=.2,
+           data=subset(transform(chk,run=Scenario),run%in%c("sim1","sim2"))), 
+xlab="SSB",ylab="F"))}  
+```
+
+## 2001 
+```{r}
+fn12( 2001) 
+```
+
+## 2002 
+```{r}
+fn12( 2002) 
+```
+
+## 2003 
+```{r}
+fn12( 2003) 
+```
+
+## 2004 
+```{r}
+fn12( 2004) 
+```
+
+## 2005 
+```{r}
+fn12( 2005) 
+```
+
+## 2006 
+```{r}
+fn12( 2006) 
+```
+
+## 2007 
+```{r}
+fn12( 2007) 
+```
+
+## 2008 
+```{r}
+fn12( 2008) 
+```
+
+## 2009 
+```{r}
+fn12( 2009) 
+```
+
+## 2010 
+```{r}
+fn12( 2010) 
+```
+
+## 2011 
+```{r}
+fn12( 2012) 
+```
+
+## 2013 
+```{r}
+fn12( 2013) 
+```
+
+## 2014 
+```{r}
+fn12( 2014) 
+```
+
+## 2015 
+```{r}
+fn12( 2015) 
+```
+
+## 2016 
+```{r}
+fn12( 2016) 
+```
+
+## 2017 
+```{r}
+fn12( 2017) 
+```
+
+## 2018 
+```{r}
+fn12( 2018) 
+```
+
+## Summary Statistics
+
+### Total Catch
+### AAV
+
+## Questions
+
+### Are we happy with 
+
++ Assumptions in the OM?
++ How the HCR was modelled
++ Summary Statistics
+
+## Next Steps
+
++ 
