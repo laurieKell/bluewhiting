@@ -362,15 +362,21 @@ fnBnd(2018)
 
 ## I v II
 ```{r}
+library(grid)
+source('/home/laurence/Desktop/sea++/PELAG/bluewhiting/R/kobe-phase.R')
+source('/home/laurence/Desktop/sea++/PELAG/bluewhiting/R/kobe-phaseMar.R')
+load("/home/laurence/Desktop/Dropbox/bluewhiting/data/smryStats1.RData")
+
+chk$run=as.character(chk$Scenario)
 fn12<-function(yr) {
-  print(kobePhaseMar2(subset(pts,year==yr&
+  kobePhaseMar2(subset(pts,year==yr&
             run%in%c("sim1","sim2")),
             xlim=c(0,1e7),ylim=c(0,1),
               quadcol=rep(c("white"),4),
               bref=2250000,fref=0.32,layer=
-geom_point(aes(ssb,f,fill=run),size=.2,
-           data=subset(transform(chk,run=Scenario),run%in%c("sim1","sim2"))), 
-xlab="SSB",ylab="F"))}  
+geom_point(aes(ssb,f,col=run),size=.2,
+           data=subset(chk,run%in%c("sim1","sim2"))), 
+xlab="SSB",ylab="F",fourth=NULL)}  
 ```
 
 ## 2001 

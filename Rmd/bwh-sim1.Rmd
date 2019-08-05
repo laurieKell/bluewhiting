@@ -375,7 +375,7 @@ with(cbind(hcr1,cut=cut(hcr2$ssb,c(0,par2["blim","lower"],par2["btrig","lower"],
 
 
 ```{r}
-save(its,qtl,pts,aav,tc,file=file.path(dirDat,"smryStats1.RData"),compress="xz")
+save(its,qtl,pts,aav,tc,chk,file=file.path(dirDat,"smryStats1.RData"),compress="xz")
 ```
 
 

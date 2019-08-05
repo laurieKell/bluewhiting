@@ -351,6 +351,8 @@ save(om,om1,sr,sr9,eql,eql9,file=file.path(dirDat,"om.RData"),compress="xz")
 ```
 
 ```{r, retro-plot, fig.height=8}
+load(file.path(dirDat,"retro.RData"))
+
 plot(retro)+
   theme_bw(16)+
   theme(legend.position="bottom")+
