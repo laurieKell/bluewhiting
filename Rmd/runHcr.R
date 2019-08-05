@@ -9,7 +9,8 @@ library(magrittr)
 library(rdrop2)
 
 ## local dir, change at your convenience
-dirMy="/home/laurence/Desktop/sea++/PELAG/bluewhiting"
+dirMy ="/home/laurence/Desktop/sea++/PELAG/bluewhiting"
+dirDat="/home/laurence/Desktop/Dropbox/PELAG/bluewhiting/data"
 
 ## access dropbox with data files
 token<-drop_auth()
@@ -128,4 +129,5 @@ sims[["sim2_bnd"]]=hcrICES(object,eql9,srDev,
                       err=err,
                       bndTac=c(0.80,1.25))
       
-save(sims,file=file.path(dirMy,"data/sims.RData"),compress="xz")
+save(sims,file=file.path(dirDat,"sims.RData"),compress="xz")
+

@@ -51,11 +51,11 @@ theme_set(theme_bw(16))
 ```
 ```{r, dirs, echo=FALSE, message=FALSE}
 #dirMy =dirname(dirname(FLife:::getScriptPath()))
-dirMy="/home/laurence/Desktop/Dropbox/PELAC/bluewhiting"
-dirDat=file.path(dirMy,"data")
+dirMy="/home/laurence/Desktop/sea++/PELAG/bluewhiting"
+dirDat="/home/laurence/Desktop/Dropbox/bluewhiting/data"
 ```
 ```{r}
-source(file.path(dirMy,"R/lFig.R"))
+source(file.path(dirMy,"Rmd/lFig.R"))
 iFig=25
 ```
 ```{r}
@@ -73,7 +73,7 @@ refpts=FLPar(c(
 ```
 
 ```{r, smry}
-load(file.path(dirDat,"data/sims.RData"))   
+load(file.path(dirDat,"sims.RData"))   
 ```
 
 ```{r, fig.height=8,fig.width=8}
@@ -119,17 +119,6 @@ plot(FLStocks("HCR I" =sims[["sim1_bnd"]][[1]],
 
 **Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
 
-```{r, fig.height=8,fig.width=8}
-plot(FLStocks("HCR I" =sims[["acf1"]][[1]],
-              "HCR II"=sims[["acf2"]][[1]]))+ 
-  theme_bw()+
-  theme(legend.position="bottom")+
-  scale_colour_manual("Management",values=rainbow(2))+
-  scale_fill_manual(values=rainbow(2))
-```
-
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
-
 ```{r}
 #Time series with quantiles for stock, recruitment, catch, ... 
 
@@ -149,7 +138,7 @@ series<-function(object,start,end){
 qtl=ldply(sims[-(1:2)],function(x)
   ldply(series(x[[1]],start=2000,end=2018),function(x) 
     as.data.frame(quantile(x,c(0.025,0.25,0.5,0.75,0.975)),drop=TRUE)))
-qtl=cbind(Scenario=rep(names(sims[-(1:2)]),each=dim(qtl)[1]/10),qtl)
+qtl=cbind(Scenario=rep(names(sims[-(1:2)]),each=dim(qtl)[1]/8),qtl)
 names(qtl)[2]="Quantity"
 qtl$Quantity=factor(qtl$Quantity,                    levels=c("rec","ssb","biomass","juve","f","catch","esb"),
 labels=c("Rec","SSB","Biomass","juvenile","F","Catch","Exploitable Biomass"))
@@ -179,7 +168,7 @@ names(chk)[1:2]=c("Scenario","year")
 its=ldply(sims[-(1:2)],function(x)
   ldply(series(x[[1]],start=2000,end=2018),function(x) 
     as.data.frame(iter(x,7),drop=TRUE)))
-its=cbind(Scenario=rep(names(sims[-(1:2)]),each=dim(its)[1]/10),its)
+its=cbind(Scenario=rep(names(sims[-(1:2)]),each=dim(its)[1]/8),its)
 names(its)[2]="Quantity"  
 its$Quantity=factor(its$Quantity,
                     levels=c("rec","ssb","biomass","juve","f","catch","esb"),
@@ -211,6 +200,17 @@ names(tc)[1]="Scenario"
 ```
 
 ```{r, chk1, fig.height=8,fig.width=8}
+par1=array(c(ftar=refpts["fmsy"],btrig=refpts["msytrig"],fmin=FLPar(0.05),blim=refpts["blim"]),
+           dim=c(4),
+           dimnames=list(c("ftar","btrig","fmin","blim")))
+
+par2=array(c(0.20,2250000,
+             0.05,1500000,
+             0.32,5200000,
+             0.20,4000000),
+          dim=c(4,2),
+          dimnames=list(c("ftar","btrig","fmin","blim"),c("lower","upper")))[c(1,3,2,4),1:2]
+
 ggplot(subset(chk,Scenario%in%c("sim1","sim2")))+   
   geom_vline(aes(xintercept=c(par2[c("btrig"),"upper"])),linetype=2,size=.2)+
   geom_vline(aes(xintercept=c(par2[c("btrig"),"lower"])),linetype=2,size=.2)+
@@ -231,8 +231,8 @@ ggplot(subset(chk,Scenario%in%c("sim1","sim2")))+
 
 ```{r}
 library(grid)
-source('/home/laurence/Desktop/Dropbox/PELAC/bluewhiting/R/kobe-phase.R')
-source('/home/laurence/Desktop/Dropbox/PELAC/bluewhiting/R/kobe-phaseMar.R')
+source('/home/laurence/Desktop/sea++/PELAG/bluewhiting/R/kobe-phaseMar.R')
+source('/home/laurence/Desktop/sea++/PELAG/bluewhiting/R/kobe-phase.R')
 
 bref=c(par2[c("btrig"),"upper"],
        par2[c("btrig"),"lower"],

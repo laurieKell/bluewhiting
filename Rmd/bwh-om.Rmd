@@ -53,8 +53,8 @@ theme_set(theme_bw(16))
 ```
 ```{r, dirs, echo=FALSE, message=FALSE}
 #dirMy =dirname(dirname(FLife:::getScriptPath()))
-dirDat="/home/laurence/Desktop/Dropbox/PELAC/bluewhiting/data"
 dirMy ="/home/laurence/Desktop/sea++/PELAG/bluewhiting"
+dirDat="/home/laurence/Desktop/Dropbox/bluewhiting/data"
 ```
 ```{r}
 source(file.path(dirMy,"Rmd/lFig.R"))
@@ -73,10 +73,10 @@ refpts=FLPar(c(
   fmgt    =0.32),units="NA")
 ```
 
-```{r, om2}
-load(file.path(dirDir,"samData.RData"))
+```{r, om2, eval=FALSE}
+load(file.path(dirDat,"samData.RData"))
 
-conf=loadConf(dat,"../conf/model.cfg")
+conf=loadConf(dat,"/home/laurence/Desktop/sea++/PELAG/bluewhiting/sam/BW_2018/conf/model.cfg")
 par =defpar(dat,conf)
 fit =sam.fit(dat,conf,par)
 
@@ -88,10 +88,11 @@ stock.n(om)=err[["stock.n"]]
 harvest(om)=err[["harvest"]]
 units(harvest(om))="f"
 
-save(retro, file=file.path(dirDat,"om.RData"),compress="xz")
+save(om,om1, file=file.path(dirDat,"om.RData"),compress="xz")
 ```
-```{r, retro}
-load(file.path(dirSAM,"modelData.RData"))
+```{r, retro, eval=FALSE}
+load(file.path(dirDat,"samModel.RData"))
+load(file.path(dirDat,"om.RData"))
 retro=retro(fit, year=10)
 
 retro=FLStocks(llply(retro,
@@ -191,6 +192,9 @@ ccf(c(rec(om1)),c(esb(om1)),main="")
 
 ```{r, sg, fig.height=5, fig.width=6}
 sg=fmle(as.FLSR(om1,model="segreg"),control=list(silent=TRUE))
+eqlSG=FLBRP(om1,sr=sg)
+fbar(eqlSG)=fbar(eqlSG)/(12)
+refpts(eqlSG)=refpts(eqlSG)[c(1,2,3)]
 
 ggplot(model.frame(FLQuants(rec    =fitted(sg), 
                             ssb    =ssb(sg),
@@ -205,6 +209,7 @@ ggplot(model.frame(FLQuants(rec    =fitted(sg),
                                          
 ```{r, bh, fig.height=5, fig.width=6}
 sr=fmle(as.FLSR(om1,model="bevholt"),control=list(silent=TRUE))
+eql=FLBRP(om1,sr=sr)   
  
 ggplot(model.frame(FLQuants(rec    =fitted(sr), 
                             ssb    =ssb(sr),
@@ -223,6 +228,8 @@ ggplot(model.frame(FLQuants(rec    =fitted(sr),
 sr9=fmle(as.FLSR(om1,model="bevholtSV"),
                 fixed=c(s=0.9,spr0=spr0(eql)),
                         control=list(silent=TRUE))
+eql9=FLBRP(om1,sr=ab(sr9)) 
+refpts(eql9)=refpts(eql9)[c(1,2,3)]
 
 ggplot(model.frame(FLQuants(rec    =fitted(sr9), 
                             ssb    =ssb(sr9),
@@ -297,9 +304,6 @@ ggplot(as.data.frame(rlnoise(2,rec(om1)%=%0,0.6,0.8)))+
 
 
 ```{r, sg-eql, fig.height=6, fig.width=6}
-eqlSG=FLBRP(om1,sr=sg)
-fbar(eqlSG)=fbar(eqlSG)/(12)
-refpts(eqlSG)=refpts(eqlSG)[c(1,2,3)]
 plot(eqlSG,refpts=FALSE)+
   theme_bw(16)
 ```
@@ -307,7 +311,6 @@ plot(eqlSG,refpts=FALSE)+
 
 
 ```{r, bh-eql, fig.height=6, fig.width=8}
-eql=FLBRP(om1,sr=sr) 
 refpts(eql)=refpts(eql)[c(1,2,3)]
 plot(eql)+
   theme_bw(16)
@@ -315,8 +318,6 @@ plot(eql)+
 **Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
 
 ```{r, bh-eql9, fig.height=6, fig.width=8}
-eql9=FLBRP(om1,sr=ab(sr9)) 
-refpts(eql9)=refpts(eql9)[c(1,2,3)]
 plot(eql9)+
   theme_bw(16)
 ```
@@ -368,8 +369,8 @@ save(assEr, file=file.path(dirDat,"assEr.RData"),compress="xz")
 
 ```{r, ass-err-plot, fig.height=10, fig.width=10}
 library(grid)
-source('/home/laurence/Desktop/Dropbox/PELAC/bluewhiting/R/kobe-phaseMar.R')
-source('/home/laurence/Desktop/Dropbox/PELAC/bluewhiting/R/kobe-phase.R')
+source('/home/laurence/Desktop/sea++/PELAG/bluewhiting/R/kobe-phaseMar.R')
+source('/home/laurence/Desktop/sea++/PELAG/bluewhiting/R/kobe-phase.R')
 
 dt2=as.data.frame(rmvnorm(1000,c(1,1),cov(assEr)))
 
