@@ -111,6 +111,8 @@ save(retro, file=file.path(dirDat,"retro.RData"),compress="xz")
 ```
 
 ```{r, fig.height=8}
+load(file.path(dirDat,"om.RData"))
+
 d=plot(om)
 d$data$qname=factor(d$data$qname,levels=c("Catch","Rec","SSB","F"))
 d+theme_bw(16)+theme(legend.position="none")+

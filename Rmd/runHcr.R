@@ -129,5 +129,5 @@ sims[["sim2_bnd"]]=hcrICES(object,eql9,srDev,
                       err=err,
                       bndTac=c(0.80,1.25))
       
-save(sims,file=file.path(dirDat,"sims.RData"),compress="xz")
+save(sims,refpts, par0, par1, par2, file=file.path(dirDat,"sims.RData"),compress="xz")
 

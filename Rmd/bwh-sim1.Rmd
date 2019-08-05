@@ -290,8 +290,8 @@ kobePhase(subset(pts,run=="sim2"),ylim=c(0,1),
 
 ```{r, fig.height=10, fig.width=10}
 library(grid)
-source('/home/laurence/Desktop/Dropbox/PELAC/bluewhiting/R/kobe-phase.R')
-source('/home/laurence/Desktop/Dropbox/PELAC/bluewhiting/R/kobe-phaseMar.R')
+source('/home/laurence/Desktop/sea++/PELAG/bluewhiting/R/kobe-phase.R')
+source('/home/laurence/Desktop/sea++/PELAG/bluewhiting/R/kobe-phaseMar.R')
 
 bref=c(par2[c("btrig"),"upper"],
        par2[c("btrig"),"lower"],
@@ -307,7 +307,7 @@ kobePhaseMar2(subset(pts,year==2012&run=="sim1"),xlim=c(0,1e7),ylim=c(0,1),
               bref=par1["blim"],fref=par1["ftar"],layer=
 geom_point(aes(ssb,f),col="red",size=.2,
            data=subset(chk,Scenario%in%c("acf1"))), 
-xlab="SSB",ylab="F")  
+xlab="SSB",ylab="F",fourth=NULL)  
 ```
 
 **Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]`  
@@ -318,7 +318,7 @@ kobePhaseMar2(subset(pts,year==2012&run=="sim2"),xlim=c(0,1e7),ylim=c(0,1),quadc
               bref=par1["blim"],fref=par1["ftar"],layer=
 geom_point(aes(ssb,f),col="red",size=.2,
            data=subset(chk,Scenario%in%c("acf2"))), 
-xlab="SSB",ylab="F")  
+xlab="SSB",ylab="F",fourth=NULL)  
 ```
 
 **Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]`  
