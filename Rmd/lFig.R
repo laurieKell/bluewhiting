@@ -20,29 +20,33 @@ lFig[19]<-"F0.1 reference point calculated with a five year moving window"
 lFig[20]<-"Retrospective estimates of time series of catch, recruitment, spawning stock biomass and fishing mortality from the 2018 stock assessment."
 lFig[21]<-"Assessment error in SSB and F derived from the retrospective runs."
 
-lFig[22]<-"Comparison between historical ICES assessment, a projection at Fmsy and HCR1 without assessment error; shown with median with 10 and 90 percentiles."
+lFig[22]<-"Comparison between historical assessment estimates, and a single Monte Carlo realisation for a projection at Fmsy, and HCR1 without assessment error."
 
-lFig[23]<-"HCR with and without assessment error; shown with median with 10 and 90 percentiles."
+lFig[23]<-"HCR with and without assessment error compared to historical estimates; with median and 10 and 90 percentiles, the hatched line is a single Monte Carlo realisation."
 
-lFig[24]<-"Comparison between HCR I & II with assessment error; shown with median with 10 and 90 percentiles."
+lFig[24]<-"Comparison between HCR I & II with assessment error; shown with median and 10 and 90 percentiles, the hatched line is a single Monte Carlo realisation."
 
-lFig[25]<-"Comparison between HCR I without and with bounds; shown with median with 10 and 90 percentiles."
-lFig[26]<-"Comparison between HCR II without and with bounds; shown with median with 10 and 90 percentiles."
+lFig[25]<-"Comparison between HCR I without and with bounds; shown with median and 10 and 90 percentiles, the hatched line is a single Monte Carlo realisation."
+lFig[26]<-"Comparison between HCR II without and with bounds; shown with median and 10 and 90 percentiles, the hatched line is a single Monte Carlo realisation."
 
 lFig[27]<-"Summary of HCR performance."
 
-lFig[28]<-"HCR I without assessment error"
-lFig[29]<-"HCR I plot of F v SSB"
-lFig[30]<-"HCR II plot of F v SSB"
-lFig[31]<-"HCR I plot of F v SSB for 2012 with marginal densities"
-lFig[32]<-"HCR II plot of F v SSB for 2012 with marginal densities"
-lFig[33]<-"Catch summary, total catch and AAV by iteration over simulated period"
-lFig[34]<-"Mean Interannual Annual Absolute Variation over time series by iteration."
-lFig[35]<-"The percentage by year when the stability mechanism was applied."
-lFig[36]<-"Probability that SSB falls below Bpa"
-lFig[37]<-"Probability that SSB falls below BLim."
+lFig[28]<-"Values of F for assessed SSB from the HCR, as a check that the HCR is working as expected"
 
-lFig[38]<-"Comparison of historical stock trends and an escapement harvesting strategy, i.e. take all biomass>Bpa"
+lFig[29]<-"Plot of F v SSB for HCR I without assessment error."
+lFig[30]<-"Plot of F v SSB for HCR I."
+lFig[31]<-"Plot of F v SSB for HCR II."
+
+lFig[32]<-"HCR I plot of F v SSB for 2012 with marginal densities"
+lFig[33]<-"HCR II plot of F v SSB for 2012 with marginal densities"
+
+lFig[34]<-"Catch summary, total catch and AAV by iteration over simulated period"
+lFig[35]<-"Mean Interannual Annual Absolute Variation over time series by iteration."
+lFig[36]<-"The percentage by year when the stability mechanism was applied."
+lFig[37]<-"Probability that SSB falls below Bpa"
+lFig[38]<-"Probability that SSB falls below BLim."
+
+lFig[39]<-"Comparison of historical stock trends and an escapement harvesting strategy (take all biomass>Bpa) and an F cap of 0.5"
 
 eFig=c("Blue whiting SSB as estimated by the last 18 assessments of the stock (conducted in 1999-2015, plus IBPBLW 2016). Time series include forecasted values for y+1 (except for IBPBLW). Prior to 2006 SSB was not estimated for Jan 1. Dotted line = forecasted SSB values from each assessment (i.e. what advice was based on); Red line = IBPLW_2016 assessment (i.e. current 'best' estimate; ICES, 2016a).",
        "From Skagen (2012), who evaluated a two tier HCR and found it to be precautionary with roughly these parameters: Trigger B1 = 4 Mt, Trigger B2 = 5 Mt and Upper bound F = 0.12 or TAC of about 500 thousand tonnes.",
@@ -50,4 +54,3 @@ eFig=c("Blue whiting SSB as estimated by the last 18 assessments of the stock (c
        "Alternative HCRs evaluated as part of MSE of long term management plans in 2016 (WKBMS 2016).")
 
 lFig=c(eFig,lFig)
-

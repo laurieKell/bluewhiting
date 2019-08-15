@@ -9,29 +9,28 @@ library(magrittr)
 library(rdrop2)
 
 ## local dir, change at your convenience
-dirMy ="/home/laurence/Desktop/sea++/PELAG/bluewhiting"
-dirDat="/home/laurence/Desktop/Dropbox/PELAG/bluewhiting/data"
+dirDat="/home/laurence/Desktop/Dropbox/bluewhiting/data"
 
 ## access dropbox with data files
 token<-drop_auth()
-saveRDS(token, "/home/laurence/Desktop/Dropbox/token.RDS")
+saveRDS(token, "token.RDS")
 
 #### get data objects ####################################
 ## Operating Model
 ## download OM dataset to the current working directory
 ## this has stock, srr and FLBRP objects
-drop_download(path='PELAG/bluewhiting/data/om.RData',local_path="data",overwrite=TRUE)
+drop_download(path='bluewhiting/data/om.RData',local_path="data",overwrite=TRUE)
 ## stock recruitment deviates
-drop_download(path='PELAG/bluewhiting/data/srDev.RData',local_path="data",overwrite=TRUE)
+drop_download(path='bluewhiting/data/srDev.RData',local_path="data",overwrite=TRUE)
 
-load(file.path("data","om.RData"))
-load(file.path("data","srDev.RData"))
+load("data/om.RData")
+load("data/srDev.RData")
 
 ## change to log scale 
 srDev=exp(srDev)
 
 #### Code to run MSE #####################################
-source(file.path(dirMy,"R/hcrICES.R"))
+#source("/home/laurence/Desktop/sea++/mydas/pkg/R/hcrICES.R")
 
 ## Number of Monte Carlo replicates
 nits  =dim(stock.n(om))[6]
@@ -70,27 +69,29 @@ par2=array(c(0.20,2250000,
           dim=c(4,2),
           dimnames=list(c("ftar","btrig","fmin","blim"),c("lower","upper")))[c(1,3,2,4),1:2]
 
+
 ## Start Simulations ################################################
 #### years for simulations
 start   =2001
 end     =2018
 interval=1
+bndTac=c(0.8,1.25)
 
 #### Assessment error
 err =rlnorm(nits,FLQuant(0,dimnames=list(year=start:end)),0.3)
-
-## Scenarios with steepness=0.9 ####################################
 
 #### Reference cases
 sims=list("ICES"=list(object,NULL))
 ## projection for FMSY
 sims[["fmsy"]]=list(fwd(om,fbar=FLQuant(1,dimnames=list(year=2001:2018))%=%0.32,
-                         sr=eql9,residuals=srDev),
-                     NULL)
-## projection for F=0.6
-sims[["0.6"]]=list(fwd(om,fbar=FLQuant(1,dimnames=list(year=2001:2018))%=%0.6,
                         sr=eql9,residuals=srDev),
                     NULL)
+## projection for F=0.6
+sims[["0.6"]]=list(fwd(om,fbar=FLQuant(1,dimnames=list(year=2001:2018))%=%0.6,
+                       sr=eql9,residuals=srDev),
+                   NULL)
+
+sims=list(om,NULL)
 ## HCR for FMSY without assessment error
 sims[["sim0.0"]]=hcrICES(object,eql9,srDev,
                       par0,
@@ -102,6 +103,11 @@ sims[["sim0"]]=hcrICES(object,eql9,srDev,
                       err=err,
                       bndTac=c(0,Inf))
 ##### HCRs
+sims[["sim1.0"]]=hcrICES(object,eql9,srDev,
+                       par1,
+                       start,end,interval,
+                       err=err%=%1,
+                       bndTac=c(0,Inf))
 sims[["sim1"]]=hcrICES(object,eql9,srDev,
                       par1,
                       start,end,interval,
@@ -130,4 +136,12 @@ sims[["sim2_bnd"]]=hcrICES(object,eql9,srDev,
                       bndTac=c(0.80,1.25))
       
 save(sims,refpts, par0, par1, par2, file=file.path(dirDat,"sims.RData"),compress="xz")
+
+### Alternative #################################
+
+alt=fwd(om,ssb_flash=ssb(om1)[,ac(2001:2017)]%=%2.25e6,sr=eql9,deviates=exp(ev),maxF=0.5)
+escape=window(alt,end=2017)
+save(escape,file=file.path(dirDat,"escape.RData"))
+
+
 

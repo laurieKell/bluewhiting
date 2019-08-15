@@ -4,7 +4,7 @@ subtitle: "Operating Model Conditioning"
 author: "Laurence Kell"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-    word_document:
+    pdf_document:
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Vignette Title}
@@ -12,7 +12,7 @@ vignette: >
 tags: FLPKG FLR
 license: Creative Commons Attribution-ShareAlike 4.0 International
 ---
-# Notes
+# Note
 
 
 ```{r knitr_init, echo=FALSE, results="hide"}
@@ -33,7 +33,7 @@ opts_chunk$set(echo    =FALSE,
 
 options(digits=3)
 
-iFig=0
+iFig=4
 ```
 ```{r, pkgs, echo=FALSE, message=FALSE}
 library(FLCore)
@@ -110,7 +110,7 @@ names(retro)=2019-seq(10)
 save(retro, file=file.path(dirDat,"retro.RData"),compress="xz")
 ```
 
-```{r, fig.height=8}
+```{r, fig.height=8, dpi=100}
 load(file.path(dirDat,"om.RData"))
 
 d=plot(om)
@@ -118,9 +118,9 @@ d$data$qname=factor(d$data$qname,levels=c("Catch","Rec","SSB","F"))
 d+theme_bw(16)+theme(legend.position="none")+
   xlab("Year")
 ```
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
-```{r, fig.width=6,fig.height=8}
+```{r, fig.width=6,fig.height=8, dpi=100}
 dat=as.data.frame(FLQuants(om1,
                   stock.wt=stock.wt,
                   catch.wt=catch.wt,
@@ -141,9 +141,9 @@ ggplot(data=dat)+
   theme_bw(16)+
   theme(legend.position="none")
 ```
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
-```{r, fig.width=8,fig.height=8}
+```{r, fig.width=8,fig.height=8, dpi=100}
 ggplot(data=subset(dat,!(qname%in%c("M","Maturity","Catch Mass"))))+
   geom_line(aes(year,data,group=age,col=ac(age)))+
   facet_wrap(~qname,scale="free",ncol=1)+
@@ -152,10 +152,10 @@ ggplot(data=subset(dat,!(qname%in%c("M","Maturity","Catch Mass"))))+
   theme(legend.position="bottom")+
   scale_color_manual("Age",values=rainbow(10))
 ```
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
-```{r, stkn, fig.height=4, fig.width=8}
+```{r, stkn, fig.height=4, fig.width=8, dpi=100}
 dat=stock.n(om1)%/%apply(stock.n(om1),1,mean)
 ggplot(as.data.frame(dat))+
   geom_point(aes(year,age,size=data))+
@@ -164,10 +164,10 @@ ggplot(as.data.frame(dat))+
   xlab("Year")+ylab("Age")
 ```
 
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]`
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]`
 
 
-```{r, ctcn, fig.height=4, fig.width=8}
+```{r, ctcn, fig.height=4, fig.width=8, dpi=100}
 dat=catch.n(om1)%/%apply(catch.n(om1),1,mean)
 ggplot(as.data.frame(dat))+
   geom_point(aes(year,age,size=data))+
@@ -176,76 +176,85 @@ ggplot(as.data.frame(dat))+
   xlab("Year")+ylab("Age")
 ```
 
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]`
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]`
 
-```{r, fig.height=6}
+```{r, fig.height=6, dpi=100}
 ccf(c(rec(om1)),c(ssb(om1)),main="")
 ```
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
-```{r, fig.height=6}
+```{r, fig.height=6, dpi=100}
 esb    =function(x) apply((stock.n(x)%*%stock.wt(x))%/%
                                          (harvest(x)%/%fbar(x)),c(2,6),sum)
 ccf(c(rec(om1)),c(esb(om1)),main="")
 ```
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
-```{r, sg, fig.height=5, fig.width=6}
+```{r, sg, fig.height=5, fig.width=6, dpi=100}
 sg=fmle(as.FLSR(om1,model="segreg"),control=list(silent=TRUE))
-eqlSG=FLBRP(om1,sr=sg)
+eqlSG=FLBRP(om1,sr=sg)  
 fbar(eqlSG)=fbar(eqlSG)/(12)
 refpts(eqlSG)=refpts(eqlSG)[c(1,2,3)]
 
-ggplot(model.frame(FLQuants(rec    =fitted(sg), 
+dat=model.frame(FLQuants(rec    =fitted(sg), 
                             ssb    =ssb(sg),
-                            rec.obs=rec(sg)),drop=T))+
-  geom_line( aes(ssb,rec))+
+                            rec.obs=rec(sg)),drop=T)
+
+ggplot(dat)+
+  geom_line( aes(ssb,rec))+  
+  geom_path( aes(ssb,rec.obs),linetype=2)+
+  geom_text( aes(ssb,rec.obs,label=year),data=subset(dat,year%in%c(1980,2018,1990,2000,2001)))+  
   geom_point(aes(ssb,rec.obs),col="red")+
   theme_bw(16)+
   xlab("SSB")+ylab("Recruitment")
 ```
 
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
                                          
-```{r, bh, fig.height=5, fig.width=6}
+```{r, bh, fig.height=5, fig.width=6, dpi=100}
 sr=fmle(as.FLSR(om1,model="bevholt"),control=list(silent=TRUE))
 eql=FLBRP(om1,sr=sr)   
  
-ggplot(model.frame(FLQuants(rec    =fitted(sr), 
-                            ssb    =ssb(sr),
-                            rec.obs=rec(sr)),drop=T))+
-  geom_line( aes(ssb,rec))+
+dat=model.frame(FLQuants(rec    =fitted(sr), 
+                         ssb    =ssb(sr),
+                         rec.obs=rec(sr)),drop=T)
+ggplot(dat)+
+  geom_line( aes(ssb,rec))+  
+  geom_path( aes(ssb,rec.obs),linetype=2)+
+  geom_text( aes(ssb,rec.obs,label=year),data=subset(dat,year%in%c(1980,2018,1990,2000,2001)))+  
   geom_point(aes(ssb,rec.obs),col="red")+
   theme_bw(16)+
-  expand_limits(x=0,y=0)+
   xlab("SSB")+ylab("Recruitment")
 ```
 
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
-```{r, bhsv, fig.height=5, fig.width=6}
+```{r, bhsv, fig.height=5, fig.width=6, dpi=100}
 sr9=fmle(as.FLSR(om1,model="bevholtSV"),
                 fixed=c(s=0.9,spr0=spr0(eql)),
                         control=list(silent=TRUE))
 eql9=FLBRP(om1,sr=ab(sr9)) 
 refpts(eql9)=refpts(eql9)[c(1,2,3)]
 
-ggplot(model.frame(FLQuants(rec    =fitted(sr9), 
+dat=model.frame(FLQuants(rec    =fitted(sr9), 
                             ssb    =ssb(sr9),
-                            rec.obs=rec(sr9)),drop=T))+
-  geom_line( aes(ssb,rec))+
+                            rec.obs=rec(sr9)),drop=T)
+
+ggplot(dat)+
+  geom_line( aes(ssb,rec))+  
+  geom_path( aes(ssb,rec.obs),linetype=2)+
+  geom_text( aes(ssb,rec.obs,label=year),data=subset(dat,year%in%c(1980,2018,1990,2000,2001)))+  
   geom_point(aes(ssb,rec.obs),col="red")+
   theme_bw(16)+
-  expand_limits(x=0,y=0)+
   xlab("SSB")+ylab("Recruitment")
 ```
 
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
-```{r, bh-regimes}
+```{r, bh-regimes, dpi=100}
 ggplot(as.data.frame(residuals(sr),drop=TRUE))+
       geom_point(aes(year,data),col="grey25")+
       geom_line( aes(year,data),col="grey75")+
@@ -257,10 +266,10 @@ ggplot(as.data.frame(residuals(sr),drop=TRUE))+
       theme_bw(16)+
       theme(axis.text.x=element_text(angle=-30),legend.position="bottom")
 ```
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
-```{r, sg-regimes}
+```{r, sg-regimes, dpi=100}
 ggplot(as.data.frame(residuals(sg),drop=TRUE)) +
       geom_point(aes(year,data),col="grey25")+
       geom_line( aes(year,data),col="grey75")+
@@ -272,9 +281,9 @@ ggplot(as.data.frame(residuals(sg),drop=TRUE)) +
       theme_bw(16)+
       theme(axis.text.x=element_text(angle=-30),legend.position="bottom")
 ```
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
-```{r, bh9-regimes}
+```{r, bh9-regimes, dpi=100}
 ggplot(as.data.frame(residuals(sr9),drop=TRUE))+
       geom_point(aes(year,data),col="grey25")+
       geom_line( aes(year,data),col="grey75")+
@@ -286,15 +295,15 @@ ggplot(as.data.frame(residuals(sr9),drop=TRUE))+
       theme_bw(16)+
       theme(axis.text.x=element_text(angle=-30),legend.position="bottom")
 ```
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
-```{r, bh-acf, fig.height=6}
+```{r, bh-acf, fig.height=6, dpi=100}
 acf(iter(residuals(sr9),1),main="Recruit Deviates")
 ```
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
-```{r, acf-sim}
+```{r, acf-sim, dpi=100}
 set.seed(67979)
 ggplot(as.data.frame(rlnoise(2,rec(om1)%=%0,0.6,0.8)))+
   geom_line(aes(year,data,col=iter))+
@@ -302,55 +311,57 @@ ggplot(as.data.frame(rlnoise(2,rec(om1)%=%0,0.6,0.8)))+
   theme(legend.position="bottom")+
   xlab("Year")+ylab("")
 ```
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
-```{r, sg-eql, fig.height=6, fig.width=6}
+```{r, sg-eql, fig.height=6, fig.width=6, dpi=100}
 plot(eqlSG,refpts=FALSE)+
   theme_bw(16)
 ```
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
-```{r, bh-eql, fig.height=6, fig.width=8}
+```{r, bh-eql, fig.height=6, fig.width=8, dpi=100}
 refpts(eql)=refpts(eql)[c(1,2,3)]
 plot(eql)+
   theme_bw(16)
 ```
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
-```{r, bh-eql9, fig.height=6, fig.width=8}
+```{r, bh-eql9, fig.height=6, fig.width=8, dpi=100}
 plot(eql9)+
   theme_bw(16)
 ```
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
-```{r, fig.width=8,fig.height=10}
+```{r, fig.width=8,fig.height=10, dpi=100}
 dat=mdply(as.numeric(dimnames(m(om1))$year[-seq(3)]),function(year){
-      x =window(om1,start=year-3,end=year)
+      x =window(om1,start=year-5,end=year)
       sr=fmle(as.FLSR(x,model="geomean"),control=list(silent=TRUE))
       eq=FLBRP(x,sr=sr)
-      as.data.frame(refpts(eq)[c("f0.1"),1:4])
-      })
+      as.data.frame(refpts(eq)[c("f0.1"),1:4])})
 
 dat$quant=factor(dat$quant,levels=c("rec","ssb","yield","harvest"),
-                           labels=c("Recruite","SSB","Yield","F"))  
+                           labels=c("Recruits","Bmsy","MSY","Fmsy")) 
+dat[dat$quant=="Recruits","data"][]=c(rec(om1)[,-(seq(5))])
+
 ggplot(dat)+
-  geom_line(aes(as.numeric(X1),data,col=refpt))+
+  geom_line(aes(as.numeric(X1)+1979,data,col=refpt))+
   facet_grid(quant~.,scale="free")+
   xlab("Year")+ylab("")+
   scale_color_manual("",values=rainbow(3))+
   theme_bw(16)+
   theme(legend.position="none")
+
 ```
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 ```{r}
 save(om,om1,sr,sr9,eql,eql9,file=file.path(dirDat,"om.RData"),compress="xz")
 ```
 
-```{r, retro-plot, fig.height=8}
+```{r, retro-plot, fig.height=8, dpi=100}
 load(file.path(dirDat,"retro.RData"))
 
 plot(retro)+
@@ -358,7 +369,7 @@ plot(retro)+
   theme(legend.position="bottom")+
   xlab("Year")
 ```
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 ```{r, ass-err}
 assEr=laply(retro, function(x){
@@ -371,10 +382,10 @@ assEr=laply(retro, function(x){
 save(assEr, file=file.path(dirDat,"assEr.RData"),compress="xz")
 ```
 
-```{r, ass-err-plot, fig.height=10, fig.width=10}
+```{r, ass-err-plot, fig.height=10, fig.width=10, dpi=100}
 library(grid)
-source('/home/laurence/Desktop/sea++/PELAG/bluewhiting/R/kobe-phaseMar.R')
-source('/home/laurence/Desktop/sea++/PELAG/bluewhiting/R/kobe-phase.R')
+source('/home/laurence/Desktop/flr/kobe/R/kobe-phaseMar.R')
+source('/home/laurence/Desktop/flr/kobe/R/kobe-phase.R')
 
 dt2=as.data.frame(rmvnorm(1000,c(1,1),cov(assEr)))
 
@@ -383,7 +394,7 @@ names(dt2)=c("stock","harvest")
 kobePhaseMar(dt2,quadcol=c("white","white","white","white"),
   xlab="F",ylab="SSB")
 ```
-**Figure `r iFig=iFig+1; iFig`** `r lFig[iFig]` 
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
 
