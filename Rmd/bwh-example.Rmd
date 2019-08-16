@@ -97,9 +97,16 @@ drop_download(path='bluewhiting/data/om.RData',
 load(file.path("data","om.RData"))
 ```
 
+```{r, dirs, echo=FALSE, message=FALSE}
+dirMy =dirname(dirname(FLife:::getScriptPath())) 
+dirMy="/home/laurence/Desktop/sea++/PELAG/bluewhiting"
+setwd(dirMy)
+dirDat=file.path(dirMy,"data")   
+```
+
 ```{r,echo=FALSE}
-load("data/om.RData")
-load("data/retro.RData")
+load(file.path(dirDat,"om.RData")) 
+load(file.path(dirDat,"retro.RData"))
 ```
 
 This loads a few 'FLR' objects 
@@ -111,7 +118,7 @@ is(om1)
 
 'om1' is the original blue whiting stock assessment amd 'om' is the assessment with a 1000 replicates derived using estimation error.
 
-```{r, omplot, fig.height=6}
+```{r, omplot, fig.height=6, dpi=50}
 plot(om)
 ```
 
@@ -145,7 +152,7 @@ ggplot(dat)+
 
 **Figure `r iFig=iFig+1; iFig`** Vectors-at-age.  
 
-```{r, timeseries, fig.width=8,fig.height=8}
+```{r, timeseries, fig.width=8,fig.height=8, dpi=50}
 ggplot(data=subset(dat,(qname%in%c("Stock Mass","Selection"))))+
   geom_line(aes(year,data,group=age,col=ac(age)))+
   facet_wrap(~qname,scale="free",ncol=1)+
@@ -159,7 +166,7 @@ ggplot(data=subset(dat,(qname%in%c("Stock Mass","Selection"))))+
 
 The dynamics are characterised by variability in recruitment that affects year class strength.
 
-```{r, stkn, fig.height=4, fig.width=8}
+```{r, stkn, fig.height=4, fig.width=8, dpi=50}
 dat=stock.n(om1)%/%apply(stock.n(om1),1,mean)
 ggplot(as.data.frame(dat))+
   geom_point(aes(year,age,size=data))+
@@ -171,7 +178,7 @@ ggplot(as.data.frame(dat))+
 **Figure `r iFig=iFig+1; iFig`** Cohort effects for stock numbers-at-age, scaled by mean by age.
 
 The catch is mainly of younger age classes as shown by the exploitable numbers-at-age.
-```{r, expltn, fig.height=4, fig.width=8}
+```{r, expltn, fig.height=4, fig.width=8, dpi=50}
 dat=dat%/%(harvest(om1)%/%fbar(om1))
 ggplot(as.data.frame(dat))+
   geom_point(aes(year,age,size=data))+
@@ -184,7 +191,7 @@ ggplot(as.data.frame(dat))+
 
 To explore whether dynamics are driven by recruitment of by SSB, the cross correlations between recruitment and SSB are plotted. If recruitment is driven by SSB then there should be a lag of +1 between SSB and $N_{1}$, however, the largest lags are negative indicating that SSB is driven by incoming year classes.
 
-```{r, rs, fig.height=6}
+```{r, rs, fig.height=6, dpi=50}
 ccf(c(rec(om1)),c(ssb(om1)),main="")
 ```
 
@@ -192,7 +199,7 @@ ccf(c(rec(om1)),c(ssb(om1)),main="")
 
 A similar phenomenon is seen for exploitable biomass, but the lag is less due to the fishery exploiting immature ages.
 
-```{r, er, fig.height=6}
+```{r, er, fig.height=6, dpi=50}
 esb    =function(x) apply((stock.n(x)%*%stock.wt(x))%/%
                                          (harvest(x)%/%fbar(x)),c(2,6),sum)
 ccf(c(rec(om1)),c(esb(om1)),main="")
@@ -205,7 +212,7 @@ ccf(c(rec(om1)),c(esb(om1)),main="")
 
 A Beverton and Holt stock recruitment relationship is fitted to the SSB-recruitment pairs.
 
-```{r, bh, fig.height=5, fig.width=6}
+```{r, bh, fig.height=5, fig.width=6, dpi=50}
 sr=fmle(as.FLSR(om1,model="bevholt"),control=list(silent=TRUE))
 
 ggplot(model.frame(FLQuants(rec    =fitted(sr), 
@@ -222,7 +229,7 @@ ggplot(model.frame(FLQuants(rec    =fitted(sr),
 
 There are stong patterns in the residuals and large recruitments can be found at low values of SSB.
 
-```{r, bh-regimes}
+```{r, bh-regimes, dpi=50}
 ggplot(as.data.frame(residuals(sr),drop=TRUE))+
       geom_point(aes(year,data),col="grey25")+
       geom_line( aes(year,data),col="grey75")+
@@ -239,7 +246,7 @@ ggplot(as.data.frame(residuals(sr),drop=TRUE))+
 
 Combining growth and selection-at-age with the stock recruitment relationship allows the expected dynamics to be derived. These, along with reference points, can be plotted as equilibrium curves. 
 
-```{r, bh-eql, fig.height=6, fig.width=8}
+```{r, bh-eql, fig.height=6, fig.width=8, dpi=50}
 eql=FLBRP(om1,sr=sr)   
  
 plot(eql9)+
@@ -250,7 +257,7 @@ plot(eql9)+
 
 Other stock recruitment relationships can be explored, since there is little evidence of a relationship between SSB and recruitment a Beverton and Holt functional form was fitted with steepness=0.9. The impact on the dynamics can be evaluated by inspection of the equilibrium curves.
 
-```{r, bh9, fig.height=5, fig.width=6}
+```{r, bh9, fig.height=5, fig.width=6, dpi=50}
 sr9=fmle(as.FLSR(om1,model="bevholtSV"),
                 fixed=c(s=0.9,spr0=spr0(eql)),
                         control=list(silent=TRUE))
@@ -267,13 +274,13 @@ plot(eql9)+
 
 The assessment error can be evaluated by performing a retrospective analysis and comparing the difference between the most recent stock assessment and those conducted with the same data in previous years.
 
-```{r, retro, eval=FALSE}
+```{r, retro, eval=FALSE, dpi=50}
 drop_download(path='bluewhiting/data/retro.RData',local_path="data",overwrite=TRUE)
 
 load(file.path("data","retro.RData"))
 ```
 
-```{r, retro-plot, fig.height=8}
+```{r, retro-plot, fig.height=8, dpi=50}
 plot(retro)+
   theme_bw(16)+
   theme(legend.position="bottom")+
@@ -360,7 +367,7 @@ par2
 
 First run a simple projection for $F_{MSY}$ for comparison with the ICES assessment and the HCR outcomes.
 
-```{r, fmsy}
+```{r, fmsy, dpi=50}
 fmsy=fwd(om,fbar=FLQuant(1,dimnames=list(year=2001:2018))%=%0.32,
                          sr=eql9,residuals=exp(residuals(sr9)))
 
@@ -373,7 +380,7 @@ plot(fmsy)
 
 Run a HCR without assessment error and compare to the projection.
 
-```{r, hcr1NoErr}
+```{r, hcr1NoErr, dpi=50}
 source('/home/laurence/Desktop/sea++/mydas/pkg/R/hcrICES.R')
 
 HCR1NoErr=hcrICES(om,eql9,
@@ -389,7 +396,7 @@ plot(FLStocks("Fmsy"=fmsy,"HCR"=HCR1NoErr[[1]]))
 
 Add assessment error.
 
-```{r, HCR1Err}
+```{r, HCR1Err, dpi=50}
 err =rlnorm(1000,FLQuant(0,dimnames=list(year=2000:2018)),0.3)
 
 HCR1=hcrICES(om,eql9,
@@ -406,7 +413,7 @@ plot(FLStocks("Without \nAssessment Error"=HCR1NoErr[[1]],"With \nAssessment Err
 
 Compare the two HCRs.
 
-```{r, HCR2}
+```{r, HCR2, dpi=50}
 HCR2=hcrICES(om,eql9,
              sr_deviances=propagate(exp(residuals(sr9)),1000),
              params=par2,
@@ -420,7 +427,7 @@ plot(FLStocks("HCR1"=HCR1[[1]],"HCR2"=HCR2[[1]]))
 
 Evaluate the effect of bounds.
 
-```{r, HCR1Bnd}
+```{r, HCR1Bnd, dpi=50}
 HCR1Bnd=hcrICES(om,eql9,
              sr_deviances=propagate(exp(residuals(sr9)),1000),
              params=par1,
