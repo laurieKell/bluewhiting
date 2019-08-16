@@ -4,7 +4,7 @@ subtitle: "Operating Model Conditioning"
 author: "Laurence Kell"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-    pdf_document:
+    word_document:
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Vignette Title}
