@@ -4,7 +4,7 @@ subtitle: "Example"
 author: "Laurence Kell"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-    html_document:
+    pdf_document:
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Vignette Title}
@@ -102,9 +102,7 @@ dirMy =dirname(dirname(FLife:::getScriptPath()))
 dirMy="/home/laurence/Desktop/sea++/PELAG/bluewhiting"
 setwd(dirMy)
 dirDat=file.path(dirMy,"data")   
-```
 
-```{r,echo=FALSE}
 load(file.path(dirDat,"om.RData")) 
 load(file.path(dirDat,"retro.RData"))
 ```
