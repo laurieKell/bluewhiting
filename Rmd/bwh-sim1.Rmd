@@ -50,9 +50,9 @@ library(magrittr)
 theme_set(theme_bw(16))
 ```
 ```{r, dirs, echo=FALSE, message=FALSE}
-#dirMy =dirname(dirname(FLife:::getScriptPath()))
-dirMy="/home/laurence/Desktop/sea++/PELAG/bluewhiting"
-dirDat="/home/laurence/Desktop/Dropbox/bluewhiting/data"
+dirMy =dirname(dirname(FLife:::getScriptPath())) 
+#dirMy=getwd()
+dirDat=file.path(dirMy,"data")   
 ```
 ```{r}
 source(file.path(dirMy,"Rmd/lFig.R"))  
@@ -74,7 +74,7 @@ refpts=FLPar(c(
 
 ```{r, smry}
 load(file.path(dirDat,"om.RData")) 
-load(file.path(dirDat,"sims.RData"))   
+load(file.path(dirDat,"sims.RData"))
 
 nms       =c("HCR1","HCR2","HCR1 Bounded","HCR2 Bounded","Historical","Fmsy")
 names(nms)=c("sim1","sim2","sim1_bnd","sim2_bnd","Historical","fmsy")

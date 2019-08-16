@@ -87,7 +87,7 @@ bndTac=c(0.8,1.25)
 err =rlnorm(nits,FLQuant(0,dimnames=list(year=start:end)),0.3)
 
 #### Reference cases
-sims=list("ICES"=list(object,NULL))
+sims=list("Historical"=list(object,NULL))
 ## projection for FMSY
 sims[["fmsy"]]=list(fwd(om,fbar=FLQuant(1,dimnames=list(year=2001:2018))%=%0.32,
                         sr=eql9,residuals=srDev),
@@ -135,7 +135,7 @@ sims[["sim2_bnd"]]=hcrICES(object,eql9,srDev,
                       err=err,
                       bndTac=c(0.80,1.25))
       
-save(sims,refpts, par0, par1, par2, file=file.path(dirDat,"sims.RData"),compress="xz")
+save(sims,refpts, par0, par1, par2, file="data/sims.RData"),compress="xz")
 
 ### Alternative #################################
 

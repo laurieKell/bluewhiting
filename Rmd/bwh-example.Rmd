@@ -15,8 +15,7 @@ license: Creative Commons Attribution-ShareAlike 4.0 International
 
 # Introduction
 
-This vignette provides an example of conditioning an Operating Model (OM) on a stock assessment, then runs example harvest control rules (HCRs).
-
+This vignette provides an example of conditioning an Operating Model (OM) on a stock assessment, running harvest control rules (HCRs), and summarising the results.
 
 ```{r knitr_init, echo=FALSE, results="hide"}
 library(knitr)
@@ -45,7 +44,8 @@ To follow this vignette you will have to install a number of packages, either fr
 
 Install FLR from [https://www.flr-project.org/](www.flr-project.org/)
 ```{r, eval=FALSE}
-install.packages(c("FLCore","FLFishery","FLasher","FLBRP","kobe","FLife"), 
+install.packages(c("FLCore","FLFishery","FLasher",
+                   "FLBRP","kobe","FLife"), 
              repos="http://flr-project.org/R")
 ```
 
@@ -80,20 +80,26 @@ library(mydas)
 ```
 
 
-## The data are in dropbox and can be loaded if you have read access
+## Data
+
+The data are in dropbox and can be loaded if you have read access. 
+
+It is assumed that you have downloaded this github repository and are running the code from the associated Rstudio project. If not you may need to change your paths.
+
 
 ```{r, data, message=FALSE, eval=FALSE}
 token<-drop_auth()
 saveRDS(token, "token.RDS")
 
-drop_download(path='bluewhiting/data/om.RData',local_path="data",overwrite=TRUE)
+drop_download(path='bluewhiting/data/om.RData',
+              local_path="data",overwrite=TRUE)
 
 load(file.path("data","om.RData"))
 ```
 
 ```{r,echo=FALSE}
-load("/home/laurence/Desktop/Dropbox/bluewhiting/data/om.RData")
-load("/home/laurence/Desktop/Dropbox/bluewhiting/data/retro.RData")
+load("data/om.RData")
+load("data/retro.RData")
 ```
 
 This loads a few 'FLR' objects 
@@ -103,7 +109,7 @@ ls()
 is(om1)
 ```
 
-'om1' is the blue whiting stock assessment amd 'om' is the assessment with a 1000 replicates with estimation error.
+'om1' is the original blue whiting stock assessment amd 'om' is the assessment with a 1000 replicates derived using estimation error.
 
 ```{r, omplot, fig.height=6}
 plot(om)
