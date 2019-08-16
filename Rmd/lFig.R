@@ -3,7 +3,7 @@ lFig[2]<-"Stock mass, catch mass, maturity, natural mortality and selection patt
 lFig[3]<-"Stock mass, catch mass, maturity, natural mortality and selection pattern at-age"
 lFig[4]<-"Relative stock numbers-at-age, i.e. numbers at an age scaled by mean numbers"
 lFig[5]<-"Relative  catch numbers-at-age, i.e. numbers at an age scaled by mean numbers"
-lFig[6]<-"Cross correlations between SSB and recruitment at age 1, a positive lag of 1 would indicate the prescence of a stock recruitment relationship, while a negative lag indicates that SSB is determined by past recruitment"
+lFig[6]<-"Cross correlations between SSB and recruitment at age 1, a positive lag of 1 would indicate the presence of a stock recruitment relationship, while a negative lag indicates that SSB is determined by past recruitment"
 lFig[7]<-"Cross correlations between exploitable biomass and recruitment at age 1, a positive lag of 1 would indicate the prescence of a stock recruitment relationship, while a negative lag indicates that SSB is determined by past recruitment"
 lFig[8]<-"Estimates of SSB and recruitment with fitted segmented regression stock recruitment relationship"
 lFig[9]<-"Estimates of SSB and recruitment with fitted Beverton and Holt stock recruitment relationship."
