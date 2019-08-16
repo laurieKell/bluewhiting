@@ -18,6 +18,20 @@ nits  =10
 source("R/hcrICES.R")
 
 
+
+### ICES reference points
+refpts=FLPar(c(
+  blim    =1500000,
+  bpa     =2250000,
+  flim    =0.88,
+  fpa     =0.53,
+  msytrig =2250000,
+  fmsy    =0.32,
+  bmgtlow =1500000,
+  bmgt    =2250000,
+  fmgstlow=0.05,
+  fmgt    =0.32),units="NA")
+
 #### HCR I:
 par1=array(c(ftar=refpts["fmsy"],btrig=refpts["msytrig"],fmin=FLPar(0.05),blim=refpts["blim"]),
            dim=c(4),
@@ -53,6 +67,10 @@ sims[["sim1.0"]]=hcrICES(object,eql9,srDev,
                             par1,
                             start,end,interval,
                             err=NULL)
+
+dat=model.frame(FLQuants(sims[[2]][[1]][,ac(2000:2018)],"fbar","ssb"))
+ggplot()+
+  geom_path(aes(ssb,fbar,col=iter))
 
 sims[["sim1.0.10"]]=hcrICES(object,eql9,srDev,
                          par1,
