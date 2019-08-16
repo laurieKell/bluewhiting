@@ -49,7 +49,8 @@ setMethod('hcrICES', signature(object="FLStock",eql='FLBRP'),
             bias<-function(object,eql,err,iYr,lag=1){
               stock.n(object)=stock.n(object)%*%err[,ac(iYr)]
               
-              object=fwd(object,catch=catch(object)[,ac(iYr-(lag:0))],sr=eql)
+              if (lag>0)
+                object=fwd(object,catch=catch(object)[,ac(iYr-(lag:0))],sr=eql)
               window(object,end=iYr+1)}
             
             chk=NULL
