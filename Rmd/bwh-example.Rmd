@@ -108,6 +108,7 @@ is(om1)
 ```{r, omplot, fig.height=6}
 plot(om)
 ```
+
 **Figure `r iFig=iFig+1; iFig`**  Blue whiting with assessment with estimation error.
 
 ## Dynamics
@@ -135,6 +136,7 @@ ggplot(dat)+
   theme_bw(16)+
   theme(legend.position="none")
 ```
+
 **Figure `r iFig=iFig+1; iFig`** Vectors-at-age.  
 
 ```{r, timeseries, fig.width=8,fig.height=8}
@@ -146,6 +148,7 @@ ggplot(data=subset(dat,(qname%in%c("Stock Mass","Selection"))))+
   theme(legend.position="bottom")+
   scale_color_manual("Age",values=rainbow(10))
 ```
+
 **Figure `r iFig=iFig+1; iFig`**  Time series of mass and selection-at-age
 
 The dynamics are characterised by variability in recruitment that affects year class strength.
@@ -178,6 +181,7 @@ To explore whether dynamics are driven by recruitment of by SSB, the cross corre
 ```{r, rs, fig.height=6}
 ccf(c(rec(om1)),c(ssb(om1)),main="")
 ```
+
 **Figure `r iFig=iFig+1; iFig`** Cross correlation between recruitment and SSB.
 
 A similar phenomenon is seen for exploitable biomass, but the lag is less due to the fishery exploiting immature ages.
@@ -187,6 +191,7 @@ esb    =function(x) apply((stock.n(x)%*%stock.wt(x))%/%
                                          (harvest(x)%/%fbar(x)),c(2,6),sum)
 ccf(c(rec(om1)),c(esb(om1)),main="")
 ```
+
 **Figure `r iFig=iFig+1; iFig`** Cross correlation between recruitment and exploitable biomass.
 
 
@@ -223,6 +228,7 @@ ggplot(as.data.frame(residuals(sr),drop=TRUE))+
       theme_bw(16)+
       theme(axis.text.x=element_text(angle=-30),legend.position="bottom")
 ```
+
 **Figure `r iFig=iFig+1; iFig`** Resiuals from the Beverton and Holt fit, boxes indicate regimes derived from the STARS algorithm.  
 
 Combining growth and selection-at-age with the stock recruitment relationship allows the expected dynamics to be derived. These, along with reference points, can be plotted as equilibrium curves. 
@@ -233,6 +239,7 @@ eql=FLBRP(om1,sr=sr)
 plot(eql9)+
   theme_bw(16)
 ```
+
 **Figure `r iFig=iFig+1; iFig`** Equilibrium curves for Beverton and Holt stock recruitment relationship, i.e. expected dynamics, with reference points.  
 
 Other stock recruitment relationships can be explored, since there is little evidence of a relationship between SSB and recruitment a Beverton and Holt functional form was fitted with steepness=0.9. The impact on the dynamics can be evaluated by inspection of the equilibrium curves.
@@ -247,6 +254,7 @@ refpts(eql9)=refpts(eql9)[c(1,2,3)]
 plot(eql9)+
   theme_bw(16)
 ```
+
 **Figure `r iFig=iFig+1; iFig`** Equilibrium curves and reference points for Beverton and Holt stock recruitment relationship with steepness constrained with a steepess of 0.9.   
 
 ## Assessment Error
@@ -265,6 +273,7 @@ plot(retro)+
   theme(legend.position="bottom")+
   xlab("Year")
 ```
+
 **Figure `r iFig=iFig+1; iFig`**  Retrospective analysis.
 
 ```{r, ass-err}
@@ -294,6 +303,7 @@ names(dt2)=c("stock","harvest")
 kobePhaseMar(dt2,quadcol=c("white","white","white","white"),
   xlab="F",ylab="SSB")
 ```
+
 **Figure `r iFig=iFig+1; iFig`** Simulation of assessment error based on retrospective analysis.  
 
 # Simulations
@@ -367,6 +377,7 @@ HCR1NoErr=hcrICES(om,eql9,
 
 plot(FLStocks("Fmsy"=fmsy,"HCR"=HCR1NoErr[[1]]))
 ```
+
 **Figure `r iFig=iFig+1; iFig`** Comparison of timeseries for $F_{MSY}$ projection and HCR without assessment error. 
 
 

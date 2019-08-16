@@ -97,7 +97,6 @@ sims[["0.6"]]=list(fwd(om,fbar=FLQuant(1,dimnames=list(year=2001:2018))%=%0.6,
                        sr=eql9,residuals=srDev),
                    NULL)
 
-sims=list(om,NULL)
 ## HCR for FMSY without assessment error
 sims[["sim0.0"]]=hcrICES(object,eql9,srDev,
                       par0,
