@@ -87,7 +87,7 @@ setMethod('hcrICES', signature(object="FLStock",eql='FLBRP'),
               
               object=fwd(object,catch=rtn,sr=eql,residuals=sr_deviances)
               
-              chk=rbind(chk,res[[2]])
+              chk=rbind(chk,data.frame(iter=seq(dim(rtn)[6]),res[[2]],catch=c(rtn[,1])))
             }
             cat("==\n")
             

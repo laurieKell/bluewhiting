@@ -1,3 +1,11 @@
+###############################################################
+## Runs the blue whiting HCR simulations ######################
+###############################################################
+
+# This should be loaded as part of an Rstudio project based om
+# github project https://github.com/laurieKell/bluewhiting
+
+##### Libraries
 library(FLasher)
 library(FLBRP)
 library(FLAssess)
@@ -8,16 +16,14 @@ library(plyr)
 library(magrittr)
 library(rdrop2)
 
-## local dir, change at your convenience
-dirDat="/home/laurence/Desktop/Dropbox/bluewhiting/data"
-
+##### Data are saved in dropbox ###########################
+## You need to save locally in the /data folder
 ## access dropbox with data files
 token<-drop_auth()
 saveRDS(token, "token.RDS")
 
-#### get data objects ####################################
+## Data objects 
 ## Operating Model
-## download OM dataset to the current working directory
 ## this has stock, srr and FLBRP objects
 drop_download(path='bluewhiting/data/om.RData',local_path="data",overwrite=TRUE)
 ## stock recruitment deviates
@@ -26,16 +32,16 @@ drop_download(path='bluewhiting/data/srDev.RData',local_path="data",overwrite=TR
 load("data/om.RData")
 load("data/srDev.RData")
 
-## change to log scale 
+## Recruitment deviates change to log scale 
 srDev=exp(srDev)
 
-#### Code to run MSE #####################################
-#source("/home/laurence/Desktop/sea++/mydas/pkg/R/hcrICES.R")
-
-## Number of Monte Carlo replicates
+# Number of Monte Carlo replicates
 nits  =dim(stock.n(om))[6]
-## make sure all slots have same number of iterations
+# make sure all slots have same number of iterations
 object=propagate(iter(om,seq(nits)),nits)
+
+#### Function to run MSE #####################################
+source("R/hcrICES.R")
 
 ### ICES reference points
 refpts=FLPar(c(
