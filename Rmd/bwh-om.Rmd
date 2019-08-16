@@ -118,6 +118,7 @@ d$data$qname=factor(d$data$qname,levels=c("Catch","Rec","SSB","F"))
 d+theme_bw(16)+theme(legend.position="none")+
   xlab("Year")
 ```
+
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 ```{r, fig.width=6,fig.height=8, dpi=100}
@@ -141,6 +142,7 @@ ggplot(data=dat)+
   theme_bw(16)+
   theme(legend.position="none")
 ```
+
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 ```{r, fig.width=8,fig.height=8, dpi=100}
@@ -152,6 +154,7 @@ ggplot(data=subset(dat,!(qname%in%c("M","Maturity","Catch Mass"))))+
   theme(legend.position="bottom")+
   scale_color_manual("Age",values=rainbow(10))
 ```
+
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
@@ -181,6 +184,7 @@ ggplot(as.data.frame(dat))+
 ```{r, fig.height=6, dpi=100}
 ccf(c(rec(om1)),c(ssb(om1)),main="")
 ```
+
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
@@ -189,6 +193,7 @@ esb    =function(x) apply((stock.n(x)%*%stock.wt(x))%/%
                                          (harvest(x)%/%fbar(x)),c(2,6),sum)
 ccf(c(rec(om1)),c(esb(om1)),main="")
 ```
+
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
@@ -266,6 +271,7 @@ ggplot(as.data.frame(residuals(sr),drop=TRUE))+
       theme_bw(16)+
       theme(axis.text.x=element_text(angle=-30),legend.position="bottom")
 ```
+
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
@@ -281,6 +287,7 @@ ggplot(as.data.frame(residuals(sg),drop=TRUE)) +
       theme_bw(16)+
       theme(axis.text.x=element_text(angle=-30),legend.position="bottom")
 ```
+
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 ```{r, bh9-regimes, dpi=100}
@@ -295,12 +302,14 @@ ggplot(as.data.frame(residuals(sr9),drop=TRUE))+
       theme_bw(16)+
       theme(axis.text.x=element_text(angle=-30),legend.position="bottom")
 ```
+
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
 ```{r, bh-acf, fig.height=6, dpi=100}
 acf(iter(residuals(sr9),1),main="Recruit Deviates")
 ```
+
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 ```{r, acf-sim, dpi=100}
@@ -311,6 +320,7 @@ ggplot(as.data.frame(rlnoise(2,rec(om1)%=%0,0.6,0.8)))+
   theme(legend.position="bottom")+
   xlab("Year")+ylab("")
 ```
+
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
@@ -318,6 +328,7 @@ ggplot(as.data.frame(rlnoise(2,rec(om1)%=%0,0.6,0.8)))+
 plot(eqlSG,refpts=FALSE)+
   theme_bw(16)
 ```
+
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
@@ -326,12 +337,14 @@ refpts(eql)=refpts(eql)[c(1,2,3)]
 plot(eql)+
   theme_bw(16)
 ```
+
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 ```{r, bh-eql9, fig.height=6, fig.width=8, dpi=100}
 plot(eql9)+
   theme_bw(16)
 ```
+
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
@@ -355,6 +368,7 @@ ggplot(dat)+
   theme(legend.position="none")
 
 ```
+
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 ```{r}
@@ -369,6 +383,7 @@ plot(retro)+
   theme(legend.position="bottom")+
   xlab("Year")
 ```
+
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 ```{r, ass-err}
@@ -394,6 +409,7 @@ names(dt2)=c("stock","harvest")
 kobePhaseMar(dt2,quadcol=c("white","white","white","white"),
   xlab="F",ylab="SSB")
 ```
+
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
