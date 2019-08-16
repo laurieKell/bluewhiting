@@ -63,7 +63,7 @@ setMethod('hcrICES', signature(object="FLStock",eql='FLBRP'),
               hcrYrs=iYr+1
               
               refpts(eql)[]=1
-              refpts(eql)=propagate(refpts(eql),100)
+              refpts(eql)=propagate(refpts(eql),dim(object)[6])
               
               if (!is.null(err))
                 mp=bias(object,eql,err,iYr,lag=hcrYrs-stkYrs-1)
@@ -87,7 +87,10 @@ setMethod('hcrICES', signature(object="FLStock",eql='FLBRP'),
               
               object=fwd(object,catch=rtn,sr=eql,residuals=sr_deviances)
               
-              chk=rbind(chk,data.frame(iter=seq(dim(rtn)[6]),res[[2]],catch=c(rtn[,1])))
+              chk=rbind(chk,data.frame(iter=factor(seq(dim(rtn)[6]),
+                                               levels=seq(seq(dim(rtn)[6])),
+                                               labels=seq(dim(rtn)[6])),
+                                       res[[2]],catch=c(rtn[,1])))
             }
             cat("==\n")
             

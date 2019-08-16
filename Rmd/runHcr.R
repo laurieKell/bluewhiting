@@ -109,11 +109,6 @@ sims[["sim0"]]=hcrICES(object,eql9,srDev,
                       err=err,
                       bndTac=c(0,Inf))
 ##### HCRs
-sims[["sim1.0"]]=hcrICES(object,eql9,srDev,
-                       par1,
-                       start,end,interval,
-                       err=err%=%1,
-                       bndTac=c(0,Inf))
 sims[["sim1"]]=hcrICES(object,eql9,srDev,
                       par1,
                       start,end,interval,
