@@ -48,8 +48,10 @@ PAIRED <- rep(brewer.pal(12, "Paired"), 100)
 # ============================================================================
 # load data
 # ============================================================================
+load(paste0(path, "sims.RData"))
 
-load(paste0(path, "smry1.RData"))
+load("data/smry1.RData")
+load("data/sims.RData")
 
 glimpse(aav)
 glimpse(chk)
@@ -57,10 +59,7 @@ glimpse(pts)
 glimpse(qtl)
 glimpse(tc)
 
-load(paste0(path, "sims.RData"))
-
 summary(sims)
-
 ```
 
 *Working document for WGWIDE 2019*
@@ -74,6 +73,37 @@ summary(sims)
 
 ```{r, echo=FALSE, fig.asp=.8, fig.align="center", message=FALSE, warning=FALSE}
 
+
+# publication theme,  updated: 20170704
+theme_publication <- function(base_size=14, base_family="Helvetica") {
+  # library(grid)
+  library(ggthemes)
+  (theme_foundation(base_size=base_size, base_family=base_family)
+    + theme(plot.title       = element_text(face = "bold",size = rel(1.0), hjust = 0.5),
+            plot.margin      = unit(c(10,5,5,5),"mm"),
+            plot.background  = element_rect(colour = NA),
+            text             = element_text(),
+            axis.t
+            itle       = element_text(face = "bold",size = rel(1)),
+            axis.title.y     = element_text(angle=90,vjust =2),
+            axis.title.x     = element_text(vjust = -0.2),
+            axis.text        = element_text(), 
+            axis.line        = element_line(colour="black"),
+            axis.ticks       = element_line(),
+            panel.grid.major = element_line(colour="#f0f0f0"),
+            panel.grid.minor = element_blank(),
+            panel.border     = element_rect(colour="black" , size=0.1),
+            panel.background = element_rect(colour = NA),
+            strip.background = element_rect(colour="#f0f0f0",fill="#f0f0f0"),
+            strip.text       = element_text(face="bold"),
+            legend.key       = element_rect(colour = NA),
+            legend.position  = "bottom",
+            legend.direction = "horizontal",
+            legend.key.size  = unit(0.2, "cm"),
+            legend.spacing   = unit(0, "cm"),  # updated from legend.margin which is deprecated
+            legend.title     = element_text(face="italic", size=rel(0.8))
+    ))
+}
 id <- "sim2"
 
 par2=array(c(0.20,2250,
@@ -87,6 +117,18 @@ hcr2 <-
              f  =c(0.05, 0.05, 0.2, 0.2, 0.32),
              ssbend = c(1500,2250,4000,5200,10000),
              fend =c(0.05, 0.2, 0.2, 0.32, 0.32))
+
+lowcase <- function(df) {
+  names(df) <- tolower(names(df)) %>% gsub("\\?|\\s+|\\.+|_+|\\(|\\)","",.) 
+  df}
+
+pts=ldply(sims[c("sim0.0","sim2","sim1_bnd","sim2_bnd","Historical","fmsy")],function(x)
+    as.data.frame(series(x[[1]],2000,2018),drop=TRUE))
+
+pts$qname=factor(pts$qname,
+                 levels=c("rec","ssb","biomass","juve","f","catch","esb"),
+                 labels=c("Rec","SSB","Biomass","juvenile","F","Catch","Exploitable \nBiomass"))
+
 
 p <-
   pts %>% 

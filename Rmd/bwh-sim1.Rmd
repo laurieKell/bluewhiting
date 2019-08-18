@@ -366,13 +366,18 @@ xlab="SSB",ylab="F",fourth=NULL)
 ```{r, tc, fig.width=8,fig.height=8, dpi=100}
 dodge=position_dodge(width=1)
 
-ggplot(melt(tc,id=c(".id","iter")),aes(x=.id, y=value))+
+nms       =c("HCR1","HCR2","HCR1 Bounded","HCR2 Bounded","Historical","Fmsy")
+names(nms)=c("sim1","sim2","sim1_bnd","sim2_bnd","Historical","fmsy")
+
+
+ggplot(melt(tc,id=c(".id","iter")),aes(x=nms[.id], y=value))+
     geom_violin(position=dodge)+
     geom_boxplot(width=0.3, position=dodge,outlier.shape=NA)+
     scale_fill_manual(values=c("white", "white"))+
-  facet_grid(variable~.,scale="free")+
-  theme_bw(16)+
-  xlab("Scenario")+ylab("")
+    facet_grid(variable~.,scale="free")+
+    theme_bw(16)+
+  xlab("Scenario")+ylab("")+
+  theme(axis.text.x=element_text(angle=-30),legend.position="bottom")
 ```
 
 **Figure `r iFig =iFig +1; iFig `** `r lFig[iFig ]` 
@@ -387,7 +392,8 @@ ggplot(aav,aes(x=Scenario, y=aav))+
     scale_fill_manual(values=c("white", "white"))+
   facet_grid(qname~.,scale="free")+
   theme_bw(16)+
-  xlab("Scenario")+ylab("")
+  xlab("Scenario")+ylab("")+
+  theme(axis.text.x=element_text(angle=-30),legend.position="bottom")
 
 ```
 
@@ -405,12 +411,13 @@ dat$Scenario=factor(dat$.id,labels=nms,
 scaleFUN <- function(x) paste(sprintf("%.0f", x/10),"%",sep="")
 
 ggplot(dat)+
-  geom_line(aes(hcrYrs,value,col=.id))+
+  geom_line(aes(hcrYrs,value,col=nms[.id]))+
   theme_bw(16)+
   theme(legend.position="bottom")+
   scale_y_continuous(labels=scaleFUN)+
                        #scales::percent_format(accuracy=0.1))+
-  xlab("Year")+ylab("Stability Mechanism Applied")
+  xlab("Year")+ylab("Stability Mechanism Applied")+
+  scale_color_manual("Scenario",values=rainbow(4))
 ```
 
 **Figure `r iFig =iFig +1; iFig `** `r lFig[iFig ]` 
@@ -426,11 +433,12 @@ ggplot(ddply(subset(pts,!(run%in%c("0.6","ICES","fmsy",
                                    "sim0","sim0.0","sim0_bnd",
                                    "acf1","acf2"))),
                     .(run,year), with,mean(bpa)))+
-  geom_line(aes(year,V1,col=run))+
-  theme_bw()+
+  geom_line(aes(year,V1,col=nms[run]))+
+  theme_bw(16)+
   theme(legend.position="bottom")+
   xlab("Year")+ylab("P(SSB<Bpa)")+
-  scale_color_manual("",values=rainbow(8))
+  scale_color_manual("",values=rainbow(8))+
+  scale_color_manual("Scenario",values=rainbow(5))
 ```
 
 **Figure `r iFig =iFig +1; iFig `** `r lFig[iFig ]` 
@@ -447,11 +455,12 @@ ggplot(ddply(subset(pts,!(run%in%c("0.6","ICES","fmsy",
                                    "sim0","sim0.0","sim0_bnd",
                                    "acf1","acf2"))),
                     .(run,year), with,mean(blim)))+
-  geom_line(aes(year,V1,col=run))+
-  theme_bw()+
+  geom_line(aes(year,V1,col=nms[run]))+
+  theme_bw(16)+
   theme(legend.position="bottom")+
   xlab("Year")+ylab("P(SSB<Blim)")+
-  scale_color_manual("",values=rainbow(8))
+  scale_color_manual("",values=rainbow(8))+
+  scale_color_manual("Scenario",values=rainbow(5))
 ```
 
 **Figure `r iFig =iFig +1; iFig `** `r lFig[iFig ]` 

@@ -68,8 +68,8 @@ sims[["sim1.0"]]=hcrICES(object,eql9,srDev,
                             start,end,interval,
                             err=NULL)
 
-dat=model.frame(FLQuants(sims[[2]][[1]][,ac(2000:2018)],"fbar","ssb"))
-ggplot()+
+dat=model.frame(FLQuants(sims[["sim1.0"]][[1]][,ac(2000:2018)],"fbar","ssb"))
+ggplot(dat)+
   geom_path(aes(ssb,fbar,col=iter))
 
 sims[["sim1.0.10"]]=hcrICES(object,eql9,srDev,

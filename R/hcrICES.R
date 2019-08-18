@@ -44,7 +44,12 @@ setMethod('hcrICES', signature(object="FLStock",eql='FLBRP'),
                    end     =start+10,
                    interval=1,
                    err     =NULL,
-                   bndTac  =c(0,Inf)){
+                   bndTac  =c(0,Inf),...){
+        
+            if ("perfect"%in%names(list(...)))
+              perfect=list(...)$perfect
+            else 
+              perfect=FALSE
             
             bias<-function(object,eql,err,iYr,lag=1){
               stock.n(object)=stock.n(object)%*%err[,ac(iYr)]
@@ -74,7 +79,9 @@ setMethod('hcrICES', signature(object="FLStock",eql='FLBRP'),
               res=hcrFn(mp,eql,params,
                         stkYrs,
                         refYrs,
-                        hcrYrs)
+                        hcrYrs,
+                        perfect=perfect,
+                        sr_deviances=sr_deviances)
               
               ##TAC Bounds
               flag=c(ssb(mp)[,ac(stkYrs)]<c(FLPar(params)["btrig"])[1])
@@ -102,6 +109,9 @@ hcrFn<-function(object,eql,params,
                 refYrs=max(as.numeric(dimnames(catch(object))$year))-1,
                 hcrYrs=max(as.numeric(dimnames(stock(object))$year)),
                 maxF  =2,
+                nyrs  =3,
+                sr_deviances=NULL,
+                perfect=FALSE,
                 ...) {
   
   ## HCR
@@ -136,7 +146,10 @@ hcrFn<-function(object,eql,params,
                    f     =c(rtn[,ac(hcrYrs)]))
     list(rtn[,ac(hcrYrs)],chk)}
   
-  status=FLCore::apply(ssb(object)[,ac(stkYrs)],6,mean)
+  if (!perfect)
+    status=FLCore::apply(ssb(object)[,ac(stkYrs)],6,mean)
+  else  
+    status=FLCore::apply(ssb(object)[,ac(min(hcrYrs))],6,mean)
   
   res=setTarget(params,status,hcrYrs)
   rtn=res[[1]]
@@ -145,13 +158,28 @@ hcrFn<-function(object,eql,params,
   
   ## TACs for target F
   object=window(object, end=max(as.numeric(hcrYrs)))
-  object[,ac(max(as.numeric(hcrYrs)))]=object[,ac(max(as.numeric(hcrYrs))-1)]
   
-  object=fwd(object,fbar=fbar(object)[,ac(min(as.numeric(hcrYrs)-1))],sr=eql)
+  ## short term projection setting of future vectors
+  if (!perfect){
+    ## set up vectors for in year projection and hcr
+    for (i in slotNames(FLStock())[-c(1,4,7,10,18:20)])
+      slot(object,i)[,ac(min(hcrYrs))]=apply(slot(object,i)[,ac(stkYrs-(nyrs)-1)],c(1,6),mean)
+  
+    if (length(hcrYrs)>1)
+      for (i in slotNames(FLStock())[-c(1,4,7,10,18:20)])
+        for (j in hcrYrs[-1])
+          slot(object,i)[,ac(j)]=slot(object,i)[,ac(hcrYrs[1])]
+
+    if (stkYrs<(hcrYrs-1))
+       object=fwd(object,fbar=fbar(object)[,ac(max(stkYrs+1):min(as.numeric(hcrYrs)-1))],sr=eql)
+    }
   
   hvt[is.na(hvt)]=6.6666
   
-  rtn=catch(fwd(object, fbar=hvt,sr=eql))[,ac(hcrYrs)]
+  if (!perfect)
+    rtn=catch(fwd(object, fbar=hvt,sr=eql))[,ac(hcrYrs)]
+  else  
+    rtn=catch(fwd(object, fbar=hvt,sr=eql,residuals=sr_deviances))[,ac(hcrYrs)]
   rtn[]=rep(c(apply(rtn,c(3:6),mean)),each=dim(rtn)[2])
   
   return(list(rtn,res[[2]]))}

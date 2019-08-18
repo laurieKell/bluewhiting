@@ -16,18 +16,20 @@ library(plyr)
 library(magrittr)
 library(rdrop2)
 
-##### Data are saved in dropbox ###########################
-## You need to save locally in the /data folder
-## access dropbox with data files
-token<-drop_auth()
-saveRDS(token, "token.RDS")
-
-## Data objects 
-## Operating Model
-## this has stock, srr and FLBRP objects
-drop_download(path='bluewhiting/data/om.RData',local_path="data",overwrite=TRUE)
-## stock recruitment deviates
-drop_download(path='bluewhiting/data/srDev.RData',local_path="data",overwrite=TRUE)
+if (FALSE){
+  ##### Data are saved in dropbox ###########################
+  ## You need to save locally in the /data folder
+  ## access dropbox with data files
+  token<-drop_auth()
+  saveRDS(token, "token.RDS")
+  
+  ## Data objects 
+  ## Operating Model
+  ## this has stock, srr and FLBRP objects
+  drop_download(path='bluewhiting/data/om.RData',local_path="data",overwrite=TRUE)
+  ## stock recruitment deviates
+  drop_download(path='bluewhiting/data/srDev.RData',local_path="data",overwrite=TRUE)
+  }
 
 load("data/om.RData")
 load("data/srDev.RData")
@@ -134,8 +136,16 @@ sims[["sim2_bnd"]]=hcrICES(object,eql9,srDev,
                       start,end,interval,
                       err=err,
                       bndTac=c(0.80,1.25))
-      
-save(sims,refpts, par0, par1, par2, file="data/sims.RData"),compress="xz")
+
+## With perfect short-term projection
+sims[["sim1_perfect"]]=hcrICES(object,eql9,srDev,
+                                par1,
+                                start,end,interval,
+                                err=err,
+                                bndTac=c(0,Inf),
+                                perfect=TRUE)
+
+save(sims,refpts, par0, par1, par2, file="data/sims.RData",compress="xz")
 
 ### Alternative #################################
 
