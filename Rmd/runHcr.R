@@ -153,6 +153,30 @@ sims[["sim1_perfect"]]=hcrICES(object,eql9,srDev,
                                bndTac=c(0,Inf),
                                perfect=TRUE)
 
+
+sims[["sim1_noass"]]=hcrICES(object,eql9,srDev,
+                             par1,
+                             start,end,interval,
+                             err=NULL,
+                             bndTac=c(0,Inf))
+sims[["sim2_noass"]]=hcrICES(object,eql9,srDev,
+                             par2,
+                             start,end,interval,
+                             err=NULL,
+                             bndTac=c(0,Inf))
+
+sims[["sim1_bnd_noass"]]=hcrICES(object,eql9,srDev,
+                           par1,
+                           start,end,interval,
+                           err=NULL,
+                           bndTac=c(0.80,1.25))
+sims[["sim2_bnd_noass"]]=hcrICES(object,eql9,srDev,
+                           par2,
+                           start,end,interval,
+                           err=NULL,
+                           bndTac=c(0.80,1.25))
+
+
 ## With perfect short-term projection
 set.seed(3456)
 err =rlnoise(nits,FLQuant(0,dimnames=list(year=start:end)),0.3,0.75)

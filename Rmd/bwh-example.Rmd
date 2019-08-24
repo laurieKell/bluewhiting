@@ -386,7 +386,7 @@ Add assessment error.
 ```{r, HCR1Err, dpi=50}
 err =rlnorm(1000,FLQuant(0,dimnames=list(year=2000:2018)),0.3)
 
-HCR1=hcrICES(om,eql9,
+HCR1=mydas:::hcrICES(om,eql9,
              sr_deviances=propagate(exp(residuals(sr9)),1000),
              params=par1,
              start=2001,end=2018,
@@ -401,7 +401,7 @@ plot(FLStocks("Without \nAssessment Error"=HCR1NoErr[[1]],"With \nAssessment Err
 Compare the two HCRs.
 
 ```{r, HCR2, dpi=50}
-HCR2=hcrICES(om,eql9,
+HCR2=mydas:::hcrICES(om,eql9,
              sr_deviances=propagate(exp(residuals(sr9)),1000),
              params=par2,
              start=2001,end=2018,
@@ -415,7 +415,7 @@ plot(FLStocks("HCR1"=HCR1[[1]],"HCR2"=HCR2[[1]]))
 Evaluate the effect of bounds.
 
 ```{r, HCR1Bnd, dpi=50}
-HCR1Bnd=hcrICES(om,eql9,
+HCR1Bnd=mydas:::hcrICES(om,eql9,
              sr_deviances=propagate(exp(residuals(sr9)),1000),
              params=par1,
              start=2001,end=2018,
