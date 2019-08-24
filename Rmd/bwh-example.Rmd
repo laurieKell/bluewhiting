@@ -384,6 +384,8 @@ plot(FLStocks("Fmsy"=fmsy,"HCR"=HCR1NoErr[[1]]))
 Add assessment error.
 
 ```{r, HCR1Err, dpi=50}
+library(mydas)
+
 err =rlnorm(1000,FLQuant(0,dimnames=list(year=2000:2018)),0.3)
 
 HCR1=mydas:::hcrICES(om,eql9,
