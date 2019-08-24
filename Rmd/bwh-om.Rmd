@@ -38,12 +38,12 @@ iFig=4
 ```{r, pkgs, echo=FALSE, message=FALSE}
 library(FLCore)
 library(ggplotFL)
-library(FLfse)
 library(kobe)
 library(TMB)
-library(stockassessment)
 library(FLBRP)
 library(FLasher)
+
+library(mvtnorm)
 
 library(plyr)
 library(reshape)
@@ -57,7 +57,7 @@ dirMy ="/home/laurence/Desktop/sea++/PELAG/bluewhiting"
 dirDat="/home/laurence/Desktop/Dropbox/bluewhiting/data"
 ```
 ```{r}
-source(file.path(dirMy,"Rmd/lFig.R"))
+source(file.path(dirMy,"Rmd/lFig.R"))  
 ```
 ```{r}
 refpts=FLPar(c(
@@ -74,6 +74,8 @@ refpts=FLPar(c(
 ```
 
 ```{r, om2, eval=FALSE}
+library(stockassessment)
+
 load(file.path(dirDat,"samData.RData"))
 
 conf=loadConf(dat,"/home/laurence/Desktop/sea++/PELAG/bluewhiting/sam/BW_2018/conf/model.cfg")
@@ -180,6 +182,20 @@ ggplot(as.data.frame(dat))+
 ```
 
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]`
+
+
+```{r}
+x=stock.wt(om1)*stock.n(om1)*mat(om1)
+ggplot(as.data.frame(x%/%apply(x,2,sum)))+
+  geom_point(aes(year,age,size=data))+
+  geom_line(aes(year,data),data=as.data.frame(rec(om1)/max(rec(om1))*10),col="red")+
+  theme_bw()+
+  theme(legend.position="none")+
+  xlab("Year")+ylab("Age & Recruitment")
+```
+
+**Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
+
 
 ```{r, fig.height=6, dpi=100}
 ccf(c(rec(om1)),c(ssb(om1)),main="")
@@ -306,6 +322,7 @@ ggplot(as.data.frame(residuals(sr9),drop=TRUE))+
 **Figure `r iFig=iFig+1;iFig`** `r  lFig[iFig]` 
 
 
+
 ```{r, bh-acf, fig.height=6, dpi=100}
 acf(iter(residuals(sr9),1),main="Recruit Deviates")
 ```
@@ -356,7 +373,7 @@ dat=mdply(as.numeric(dimnames(m(om1))$year[-seq(3)]),function(year){
       as.data.frame(refpts(eq)[c("f0.1"),1:4])})
 
 dat$quant=factor(dat$quant,levels=c("rec","ssb","yield","harvest"),
-                           labels=c("Recruits","Bmsy","MSY","Fmsy")) 
+                           labels=c("Recruits","SSB","Yield","F")) 
 dat[dat$quant=="Recruits","data"][]=c(rec(om1)[,-(seq(5))])
 
 ggplot(dat)+

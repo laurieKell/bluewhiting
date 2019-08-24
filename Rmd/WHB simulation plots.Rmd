@@ -44,7 +44,7 @@ source("D:/GIT/mptools/r/my_utils.r")
 # set colour scheme
 PAIRED <- rep(brewer.pal(12, "Paired"), 100)
 
-
+path="/home/laurence/Desktop/Dropbox/bluewhiting/data"
 # ============================================================================
 # load data
 # ============================================================================
@@ -83,8 +83,7 @@ theme_publication <- function(base_size=14, base_family="Helvetica") {
             plot.margin      = unit(c(10,5,5,5),"mm"),
             plot.background  = element_rect(colour = NA),
             text             = element_text(),
-            axis.t
-            itle       = element_text(face = "bold",size = rel(1)),
+            axis.title       = element_text(face = "bold",size = rel(1)),
             axis.title.y     = element_text(angle=90,vjust =2),
             axis.title.x     = element_text(vjust = -0.2),
             axis.text        = element_text(), 
@@ -104,7 +103,7 @@ theme_publication <- function(base_size=14, base_family="Helvetica") {
             legend.title     = element_text(face="italic", size=rel(0.8))
     ))
 }
-id <- "sim2"
+id <- "sim1_perfect"
 
 par2=array(c(0.20,2250,
              0.05,1500,
@@ -122,13 +121,31 @@ lowcase <- function(df) {
   names(df) <- tolower(names(df)) %>% gsub("\\?|\\s+|\\.+|_+|\\(|\\)","",.) 
   df}
 
-pts=ldply(sims[c("sim0.0","sim2","sim1_bnd","sim2_bnd","Historical","fmsy")],function(x)
+
+### Summary stats
+series<-function(object,start,end){
+  res=FLQuants(window(object,start=start,end=end),
+               catch  =catch,
+               ssb    =ssb,
+               biomass=computeStock,
+               juve   =function(x) computeStock(x)-ssb(x),
+               esb    =function(x) apply((stock.n(x)%*%stock.wt(x))%/%
+                                         (harvest(x)%/%fbar(x)),c(2,6),sum),
+               rec    =rec,
+               f      =fbar)
+  res}
+
+
+pts=ldply(sims,function(x)
     as.data.frame(series(x[[1]],2000,2018),drop=TRUE))
 
 pts$qname=factor(pts$qname,
                  levels=c("rec","ssb","biomass","juve","f","catch","esb"),
                  labels=c("Rec","SSB","Biomass","juvenile","F","Catch","Exploitable \nBiomass"))
 
+pts=subset(pts,year>2001)
+
+chk=ldply(sims, function(x) x[[2]]) 
 
 p <-
   pts %>% 

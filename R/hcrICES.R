@@ -5,17 +5,21 @@
 #' @description Harvest Control Rule, calculates Total Allowable Catch (TAC) based on a hockey stock harvest control rule.
 #' @author Laurence Kell, Sea++
 #'  
+#' @usage hcrICES(object,eql,sr_deviances,params, 
+#'          start=max(dimnames(object)$year)-10, end=start+10, interval=1,
+#'          err=NULL,bndTac=c(0,Inf),...)
+#'          
 #' @param object an object of class \code{FLStock} 
 #' @param eql \code{FLBRP} with a stock recruitment relationship used for projection
-# #' @param sr_deviances \code{FLQuant} recuitment deviates on the log scale, i.e. multiplicative
-# #' @param params \code{FLPar} HCR parameters, specifying blim, btrig, ftar and fmin
-# #' @param start \code{numeric} first year for simulation
-# #' @param end \code{numeric}   last year for simukation
-# #' @param interval  \code{numeric} time step, 1 year by default
-# #' @param err \code{FLQuant} assessment error on SSB for year used for HCR
-# #' @param bndTac \code{numeric} bounds on TAC, by default these are turned off, for 20 percent constraint set to c(0.8,1.2)
+#' @param sr_deviances \code{FLQuant} recuitment deviates on the log scale, i.e. multiplicative
+#' @param params \code{FLPar} HCR parameters, specifying blim, btrig, ftar and fmin
+#' @param start \code{numeric} first year for simulation
+#' @param end \code{numeric}   last year for simukation
+#' @param interval  \code{numeric} time step, 1 year by default
+#' @param err \code{FLQuant} assessment error on SSB for year used for HCR
+#' @param bndTac \code{numeric} bounds on TAC, by default these are turned off, for 20 percent constraint set to c(0.8,1.2)
 #' @param ... any additional arguments
-
+#' 
 #' @aliases hcrICES hcrICES-method hcrICES,FLStock,FLBRP-method
 #' 
 #' @export hcrICES

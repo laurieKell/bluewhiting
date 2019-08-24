@@ -86,6 +86,7 @@ interval=1
 bndTac=c(0.8,1.25)
 
 #### Assessment error
+set.seed(3456)
 err =rlnorm(nits,FLQuant(0,dimnames=list(year=start:end)),0.3)
 
 #### Reference cases
@@ -138,12 +139,30 @@ sims[["sim2_bnd"]]=hcrICES(object,eql9,srDev,
                       bndTac=c(0.80,1.25))
 
 ## With perfect short-term projection
-sims[["sim1_perfect"]]=hcrICES(object,eql9,srDev,
+sims[["sim1_short-term"]]=hcrICES(object,eql9,srDev,
                                 par1,
                                 start,end,interval,
                                 err=err,
                                 bndTac=c(0,Inf),
                                 perfect=TRUE)
+
+## With perfect short-term projection
+sims[["sim1_perfect"]]=hcrICES(object,eql9,srDev,
+                               par1,
+                               start,end,interval,
+                               bndTac=c(0,Inf),
+                               perfect=TRUE)
+
+## With perfect short-term projection
+set.seed(3456)
+err =rlnoise(nits,FLQuant(0,dimnames=list(year=start:end)),0.3,0.75)
+
+sims[["sim1_ar"]]=hcrICES(object,eql9,srDev,
+                                  par1,
+                                  start,end,interval,
+                                  err=err,
+                                  bndTac=c(0,Inf),
+                                  perfect=TRUE)
 
 save(sims,refpts, par0, par1, par2, file="data/sims.RData",compress="xz")
 

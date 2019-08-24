@@ -180,11 +180,6 @@ par2=array(c(0.20,2250000,
           dim=c(4,2),
           dimnames=list(c("ftar","btrig","fmin","blim"),c("lower","upper")))[c(1,3,2,4),1:2]
 
-library(grid)
-library(kobe)
-source('/home/laurence/Desktop/flr/kobe/R/kobe-phaseMar.R')
-source('/home/laurence/Desktop/flr/kobe/R/kobe-phase.R')
-
 bref=c(par2[c("btrig"),"upper"],
        par2[c("btrig"),"lower"],
        par2[c("blim"), "upper"],
@@ -231,10 +226,6 @@ plot(FLStocks("Fmsy"=sims[["fmsy"]][[1]],
 
 
 ```{r}
-library(grid)
-source('/home/laurence/Desktop/flr/kobe/R/kobe-phase.R')
-source('/home/laurence/Desktop/flr/kobe/R/kobe-phaseMar.R')  
-                 
 fn1<-function(yr) {
   ymax=max(c(ldply(sims[c("sim1")], function(x)
      as.data.frame(quantile(c(catch(x[[1]])[,ac(2001:2018)]),0.95),drop=T))[,2]))
@@ -274,47 +265,47 @@ xlab="SSB",ylab="F",fourth=fourth)}
 
 # Simulations
 ## HCR I:   2001 
-```{r}
+```{r, hcr1_2001}
 fn1(2001)    
 ```
 
 ## HCR I:   2002 
-```{r}
+```{r, hcr1_2002}
 fn1(2002) 
 ```
 
 ## HCR I:   2003 
-```{r}
+```{r, hcr1_2003}
 fn1(2003) 
 ```
 
 ## HCR I:   2004 
-```{r}
+```{r, hcr1_2004}
 fn1(2004) 
 ```
 
 ## HCR I:   2005 
-```{r}
+```{r, hcr1_2005}
 fn1(2005) 
 ```
 
 ## HCR I:   2006 
-```{r}
+```{r, hcr1_2006}
 fn1(2006) 
 ```
 
 ## HCR I:   2007 
-```{r}
+```{r, hcr1_2007}
 fn1(2007) 
 ```
 
 ## HCR I:   2008 
-```{r}
+```{r, hcr1_2008}
 fn1(2008)
 ```
 
 ## HCR I:   2009 
-```{r}
+```{r, hcr1_2009}
 fn1(2009) 
 ```
 
@@ -340,143 +331,139 @@ fn1(2009)
 ```
 
 ## HCR I:   2010 
-```{r}
+```{r, hcr1_2010}
 fn1(2010) 
 ```
 
 ## HCR I:   2011 
-```{r}
+```{r, hcr1_2011}
 fn1(2011) 
 ```
 
 ## HCR I:   2012
-```{r}
+```{r, hcr1_2012}
 fn1(2012) 
 ```
 
 ## HCR I:   2013 
-```{r}
+```{r, hcr1_2013}
 fn1(2013) 
 ```
 
 ## HCR I:   2014 
-```{r}
+```{r, hcr1_2014}
 fn1(2014) 
 ```
 
 ## HCR I:   2015 
-```{r}
+```{r, hcr1_2015}
 fn1(2015) 
 ```
 
 ## HCR I:   2016 
-```{r}
+```{r, hcr1_2016}
 fn1(2016) 
 ```
 
 ## HCR I:   2017 
-```{r}
+```{r, hcr1_2017}
 fn1(2017) 
 ```
 
 ## HCR I:   2018 
-```{r}
+```{r, hcr1_2018}
 fn1(2018) 
 ```
 
 # Bounds
 
 ## Bounds:   2001 
-```{r}
-library(grid)
-source('/home/laurence/Desktop/flr/kobe/R/kobe-phase.R')
-source('/home/laurence/Desktop/flr/kobe/R/kobe-phaseMar.R')
-
+```{r, hcr1bnd_2001}
 fnBnd(2001)   
 ```
 
 ## Bounds:   2002 
-```{r}
+```{r, hcr1bnd_2002}
 fnBnd(2002) 
 ```
 
 ## Bounds:   2003 
-```{r}
+```{r, hcr1bnd_2003}
 fnBnd(2003) 
 ```
 
 ## Bounds:   2004 
-```{r}
+```{r, hcr1bnd_2004}
 fnBnd(2004) 
 ```
 
 ## Bounds:   2005 
-```{r}
+```{r, hcr1bnd_2005}
 fnBnd(2005) 
 ```
 
 ## Bounds:   2006 
-```{r}
+```{r, hcr1bnd_2006}
 fnBnd(2006) 
 ```
 
 ## Bounds:   2007 
-```{r}
+```{r, hcr1bnd_2007}
 fnBnd(2007) 
 ```
 
 ## Bounds:   2008 
-```{r}
+```{r, hcr1bnd_2008}
 fnBnd(2008) 
 ```
 
 ## Bounds:   2009 
-```{r}
+```{r, hcr1bnd_2009}
 fnBnd(2009) 
 ```
 
 ## Bounds:   2010 
-```{r}
+```{r, hcr1bnd_2010}
 fnBnd(2010) 
 ```
 
 ## Bounds:   2011 
-```{r}
+```{r, hcr1bnd_2011}
 fnBnd(2011) 
 ```
 
 ## Bounds:   2012 
-```{r}
+```{r, hcr1bnd_2012}
 fnBnd(2012) 
 ```
 
 ## Bounds:   2013 
-```{r}
+```{r, hcr1bnd_2013}
 fnBnd(2013) 
 ```
 
 ## Bounds:   2014 
-```{r}
+```{r, hcr1bnd_2014}
 fnBnd(2014) 
 ```
 
 ## Bounds:   2015 
-```{r}
+```{r, hcr1bnd_2015}
 fnBnd(2015) 
 ```
 
 ## Bounds:   2016 
-```{r}
+```{r, hcr1bnd_2016}
 fnBnd(2016) 
 ```
 
 ## Bounds:   2017 
-```{r}
+```{r, hcr1bnd_2017}
 fnBnd(2017) 
 ```
 
 ## Bounds:   2018 
-```{r}
+```{r, hcr1bnd_2018}
 fnBnd(2018) 
 ```
 
@@ -505,97 +492,93 @@ xlab="SSB",ylab="F",fourth=fourth)
 # HCR I v II 
 
 ## HCR I v II:   2001 
-```{r}
-library(grid)
-source('/home/laurence/Desktop/flr/kobe/R/kobe-phase.R')
-source('/home/laurence/Desktop/flr/kobe/R/kobe-phaseMar.R')
-
+```{r, hcr12_2001}
 fn12(2001) 
 ```
 
 ## HCR I v II:   2002 
-```{r}
+```{r, hcr12_2002}
 fn12(2002) 
 ```
 
 ## HCR I v II:   2003 
-```{r}
+```{r, hcr12_2003}
 fn12(2003) 
 ```
 
 ## HCR I v II:   2004 
-```{r}
+```{r, hcr12_2004}
 fn12(2004) 
 ```
 
 ## HCR I v II:   2005 
-```{r}
+```{r, hcr12_2005}
 fn12(2005) 
 ```
 
 ## HCR I v II:   2006 
-```{r}
+```{r, hcr12_2006}
 fn12(2006) 
 ```
 
 ## HCR I v II:   2007 
-```{r}
+```{r, hcr12_2007}
 fn12(2007) 
 ```
 
 ## HCR I v II:   2008 
-```{r}
+```{r, hcr12_2008}
 fn12(2008) 
 ```
 
 ## HCR I v II:   2009 
-```{r}
+```{r, hcr12_2009}
 fn12(2009) 
 ```
 
 ## HCR I v II:   2010 
-```{r}
+```{r, hcr12_2010}
 fn12(2010) 
 ```
 
 ## HCR I v II:   2011 
-```{r}
+```{r, hcr12_2011}
 fn12(2011) 
 ```
 
 ## HCR I v II:   2012 
-```{r}
+```{r, hcr12_2012}
 fn12(2012) 
 ```
 
 
 ## HCR I v II:   2013 
-```{r}
+```{r, hcr12_2013}
 fn12(2013) 
 ```
 
 ## HCR I v II:   2014 
-```{r}
+```{r, hcr12_2014}
 fn12(2014) 
 ```
 
 ## HCR I v II:   2015 
-```{r}
+```{r, hcr12_2015}
 fn12(2015) 
 ```
 
 ## HCR I v II:   2016 
-```{r}
+```{r, hcr12_2016}
 fn12(2016) 
 ```
 
 ## HCR I v II:   2017 
-```{r}
+```{r, hcr12_2017}
 fn12(2017) 
 ```
 
 ## HCR I v II:   2018 
-```{r}
+```{r, hcr12_2018}
 fn12(2018) 
 ```
 
@@ -623,9 +606,7 @@ names(pts)[1]="run"
 pts$bpa =pts$stock<2.25e6
 pts$blim=pts$stock<1.5e6
 
-ggplot(ddply(subset(pts,!(run%in%c("0.6","ICES","fmsy",
-                                   "sim0","sim0.0","sim0_bnd",
-                                   "acf1","acf2"))),
+ggplot(ddply(subset(pts,(run%in%c("sim1","sim2","sim1_bnd","sim2_bnd","fmsy","Historical"))),
                     .(run,year), with,mean(bpa)))+
   geom_line(aes(year,V1,col=run))+
   theme_bw()+
@@ -642,9 +623,9 @@ names(pts)[1]="run"
 pts$bpa =pts$stock<2.25e6
 pts$blim=pts$stock<1.5e6
 
-ggplot(ddply(subset(pts,!(run%in%c("0.6","ICES","fmsy",
-                                   "sim0","sim0.0","sim0_bnd",
-                                   "acf1","acf2"))),
+ggplot(ddply(subset(pts,(run%in%c("sim1","sim1_bnd",
+                                   "sim2","sim2_bnd",
+                                   "Historical","fmsy"))),
                     .(run,year), with,mean(blim)))+
   geom_line(aes(year,V1,col=run))+
   theme_bw()+

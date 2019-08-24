@@ -30,7 +30,7 @@ opts_chunk$set(echo    =TRUE,
                tidy    =FALSE,
                warning =FALSE,
                fig.height=4.5,
-               fig.width =8,
+               fig.width =6,
                fig.path  ="tex/example-")
 
 options(digits=3)
@@ -76,9 +76,9 @@ library(FLCore)
 library(FLasher)
 library(FLBRP)
 library(FLife)
-library(mydas)
-```
 
+library(kobe)
+```
 
 ## Data
 
@@ -150,7 +150,7 @@ ggplot(dat)+
 
 **Figure `r iFig=iFig+1; iFig`** Vectors-at-age.  
 
-```{r, timeseries, fig.width=8,fig.height=8, dpi=50}
+```{r, timeseries, fig.width=5,fig.height=5, dpi=50}
 ggplot(data=subset(dat,(qname%in%c("Stock Mass","Selection"))))+
   geom_line(aes(year,data,group=age,col=ac(age)))+
   facet_wrap(~qname,scale="free",ncol=1)+
@@ -296,17 +296,7 @@ assEr=laply(retro, function(x){
     ssb=c(ssb(x)[,yr])/c(ssb(om1)[,yr]))})
 ```
 
-```{r, echo=FALSE}
-library(grid)
-source('/home/laurence/Desktop/flr/kobe/R/kobe-phaseMar.R')
-source('/home/laurence/Desktop/flr/kobe/R/kobe-phase.R')
-```
-
 ```{r, ass-err-plot, fig.height=10, fig.width=10}
-library(grid)
-source('/home/laurence/Desktop/flr/kobe/R/kobe-phaseMar.R')
-source('/home/laurence/Desktop/flr/kobe/R/kobe-phase.R')
-
 dt2=as.data.frame(rmvnorm(1000,c(1,1),cov(assEr)))
 
 names(dt2)=c("stock","harvest")
@@ -379,9 +369,8 @@ plot(fmsy)
 Run a HCR without assessment error and compare to the projection.
 
 ```{r, hcr1NoErr, dpi=50}
-source('/home/laurence/Desktop/sea++/mydas/pkg/R/hcrICES.R')
-
-HCR1NoErr=hcrICES(om,eql9,
+library(mydas)
+HCR1NoErr=mydas:::hcrICES(om,eql9,
              sr_deviances=propagate(exp(residuals(sr9)),1000),
              params=par1,
              start=2001,end=2018)

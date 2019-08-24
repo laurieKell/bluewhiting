@@ -36,10 +36,7 @@ options(digits=3)
 ```{r, pkgs, echo=FALSE, message=FALSE}
 library(FLCore)
 library(ggplotFL)
-library(FLfse)
 library(kobe)
-library(TMB)
-library(stockassessment)
 library(FLBRP)
 library(FLasher)
 
@@ -55,8 +52,8 @@ dirMy =dirname(dirname(FLife:::getScriptPath()))
 dirDat=file.path(dirMy,"data")   
 ```
 ```{r}
-source(file.path(dirMy,"Rmd/lFig.R"))  
-iFig =25   
+source(file.path(dirMy,"Rmd/lFig.R")) 
+iFig  =26   
 ```
 ```{r}
 refpts=FLPar(c(
@@ -74,31 +71,38 @@ refpts=FLPar(c(
 
 ```{r, smry}
 load(file.path(dirDat,"om.RData")) 
-load(file.path(dirDat,"sims.RData"))
+load(file.path(dirDat,"sims.RData")) 
 
 nms       =c("HCR1","HCR2","HCR1 Bounded","HCR2 Bounded","Historical","Fmsy")
 names(nms)=c("sim1","sim2","sim1_bnd","sim2_bnd","Historical","fmsy")
 ```
 
 ```{r, fig.height=8,fig.width=8, dpi=100}
-plot(FLStocks("Historical"=om1,
-              "Fmsy"      =iter(sims[["fmsy"]][[1]],1),
-              "HCR(Fmsy)" =iter(sims[["sim0.0"]][[1]],1)))+
+p=plot(FLStocks("Historical"=om1,
+                "Fmsy"      =iter(sims[["fmsy"]][[1]],1),
+                "HCR(Fmsy)" =iter(sims[["sim0.0"]][[1]],1)))+
   theme_bw(16)+
   theme(legend.position="bottom")+
   scale_colour_manual("",values=rainbow(10)[c(1,9,7)])
+p$data$stock=factor(p$data$stock,levels=c("Historical","Fmsy","HCR(Fmsy)"))
+p$data=subset(p$data,qname!="Rec")
+p$data$qname=factor(p$data$qname,levels=c("F","Catch","SSB"))
+p
 ```
 
-**Figure `r iFig =iFig +1; iFig `** `r lFig[iFig ]` 
+**Figure `r iFig  =iFig  +1; iFig  `** `r lFig[iFig ]` 
 
 
-```{r, fig.height=8,fig.width=8, dpi=100}
-plot(FLStocks("Fmsy"=sims[["fmsy"]][[1]],
+```{r, fig.height=6,fig.width=8, dpi=100}
+p=plot(FLStocks("Fmsy"=sims[["fmsy"]][[1]],
               "HCR(Fmsy)"=sims[["sim0.0"]][[1]],
               "HCR(Fmsy) with Ass. Error"=sims[["sim0"]][[1]]))+
   theme_bw(16)+
   theme(legend.position="bottom")+
   scale_colour_manual("Management",values=rainbow(3))
+p$data=subset(p$data,qname!="Rec")
+p$data$qname=factor(p$data$qname,levels=c("Rec","F","Catch","SSB"))
+p
 ```
 
 **Figure `r iFig =iFig +1; iFig `** `r lFig[iFig ]` 
@@ -106,18 +110,22 @@ plot(FLStocks("Fmsy"=sims[["fmsy"]][[1]],
 \newpage
 \blandscape
 
-```{r, fig.height=8,fig.width=12, dpi=100}
+```{r, fig.height=6,fig.width=12, dpi=100}
 p=plot(FLStocks("HCR I" =sims[["sim1"]][[1]],
                 "HCR II"=sims[["sim2"]][[1]]))+
   theme_bw(16)+
   theme(legend.position="bottom")+
   scale_colour_manual("Management",values=rainbow(3))
+p$data=subset(p$data,qname!="Rec")
+p$data$qname=factor(p$data$qname,levels=c("Rec","F","Catch","SSB"))
 
 p2=plot(FLStocks("HCR I" =iter(sims[["sim1"]][[1]],1),
                  "HCR II"=iter(sims[["sim2"]][[1]],1)))+
   theme_bw(16)+
   theme(legend.position="bottom")+
   scale_colour_manual("Management",values=rep("black",2))
+p2$data=subset(p2$data,qname!="Rec")
+p2$data$qname=factor(p2$data$qname,levels=c("Rec","F","Catch","SSB"))
 
 p+geom_line(aes(date,data),data=p2$data,linetype=2)+
   facet_grid(qname~stock,scale="free")+
@@ -129,18 +137,22 @@ p+geom_line(aes(date,data),data=p2$data,linetype=2)+
 **Figure `r iFig =iFig +1; iFig `** `r lFig[iFig ]` 
 
 \newpage
-```{r, fig.height=8,fig.width=12, dpi=100}
+```{r, fig.height=6,fig.width=12, dpi=100}
 p=plot(FLStocks("HCR I"        =sims[["sim1"]][[1]],  
                 "HCR I bounded"=sims[["sim1_bnd"]][[1]]))+ 
   theme_bw(16)+
   theme(legend.position="bottom")+
   scale_colour_manual("Management",values=rainbow(3))
+p$data=subset(p$data,qname!="Rec")
+p$data$qname=factor(p$data$qname,levels=c("Rec","F","Catch","SSB"))
 
 p2=plot(FLStocks("HCR I"        =iter(sims[["sim1"]][[1]],1),  
                  "HCR I bounded"=iter(sims[["sim1_bnd"]][[1]],1)))+ 
   theme_bw(16)+
   theme(legend.position="bottom")+
   scale_colour_manual("Management",values=rep("black",2))
+p2$data=subset(p2$data,qname!="Rec")
+p2$data$qname=factor(p2$data$qname,levels=c("Rec","F","Catch","SSB"))
 
 p+geom_line(aes(date,data),data=p2$data,linetype=2)+
   facet_grid(qname~stock,scale="free")+
@@ -153,18 +165,22 @@ p+geom_line(aes(date,data),data=p2$data,linetype=2)+
 
 
 \newpage
-```{r, fig.height=8,fig.width=12, dpi=100}
+```{r, fig.height=6,fig.width=12, dpi=100}
 p=plot(FLStocks("HCR II"        =sims[["sim2"]][[1]],  
                 "HCR II bounded"=sims[["sim2_bnd"]][[1]]))+ 
   theme_bw(16)+
   theme(legend.position="bottom")+
   scale_colour_manual("Management",values=rainbow(3))
+p$data=subset(p$data,qname!="Rec")
+p$data$qname=factor(p$data$qname,levels=c("Rec","F","Catch","SSB"))
 
 p2=plot(FLStocks("HCR II"        =iter(sims[["sim2"]][[1]],1),  
                  "HCR II bounded"=iter(sims[["sim2_bnd"]][[1]],1)))+ 
   theme_bw(16)+
   theme(legend.position="bottom")+
   scale_colour_manual("Management",values=rep("black",2))
+p2$data=subset(p2$data,qname!="Rec")
+p2$data$qname=factor(p2$data$qname,levels=c("Rec","F","Catch","SSB"))
 
 p+geom_line(aes(date,data),data=p2$data,linetype=2)+
   facet_grid(qname~stock,scale="free")+
@@ -201,8 +217,8 @@ pts$qname=factor(pts$qname,
 qtl=ddply(pts,.(.id,qname,year), with,
                     t(as.data.frame(quantile(data,c(0.025,0.25,0.5,0.75,0.975)),drop=TRUE)))
 
-aav=ddply(subset(pts,year>=2000),.(.id,qname,iter), with,
-                data.frame(aav=mean(abs((data[-1]-data[-length(data)])/data[-1]))))
+aav=ddply(subset(pts,year>=2000),.(.id,qname,iter), with,  
+                data.frame(aav=mean(abs((data[-1]-data[-length(data)])/data[-length(data)]))))
 
 chk=ldply(sims[c("sim1","sim2","sim1_bnd","sim2_bnd")], function(x) x[[2]]) 
 
@@ -385,7 +401,7 @@ ggplot(melt(tc,id=c(".id","iter")),aes(x=nms[.id], y=value))+
 
 ```{r, aav1, fig.height=10, fig.width=8, dpi=100}
 aav$Scenario=factor(aav$.id,labels=nms,
-                            levels=names(nms))
+                            levels=names(nms))  
 ggplot(aav,aes(x=Scenario, y=aav))+
     geom_violin(position=dodge)+
     geom_boxplot(width=0.3, position=dodge,outlier.shape=NA)+
@@ -465,6 +481,43 @@ ggplot(ddply(subset(pts,!(run%in%c("0.6","ICES","fmsy",
 
 **Figure `r iFig =iFig +1; iFig `** `r lFig[iFig ]` 
 
+
+```{r, bnd, fig.height=8}
+plot(FLStocks("No Bound"=window(iter(sims[["sim1_noass"]][[1]],2),start=2000),
+              "Bound"   =window(iter(sims[["sim1_bnd_noass"]][[1]],2),start=2000)))+
+  geom_hline(aes(yintercept=y),col="red",data=data.frame(qname="SSB",y=2.25e6))+
+  theme_bw(16)+theme(legend.position="bottom")+
+  scale_color_manual("",values=rainbow(10)[c(4,9)])+
+  xlab("Year")
+```
+
+**Figure `r iFig =iFig +1; iFig `** `r lFig[iFig ]` 
+
+```{r, fig.height=5}
+ctc=catch(window(iter(sims[["sim1_noass"]][[1]],2),start=2000))
+ctb=catch(window(iter(sims[["sim1_bnd_noass"]][[1]],2),start=2000))
+
+dat=as.data.frame(FLQuants(
+              "SSB"      =ssb(window(iter(sims[["sim1_noass"]][[1]],2),start=2000,end=2017)),
+              "SSB Bound"=ssb(window(iter(sims[["sim1_bnd_noass"]][[1]],2),start=2000,end=2017)),
+              "No Bound" =(ctc[,-1]-ctc[,-dim(ctc)[2]])/ctc[,-dim(ctc)[2]],
+              "Bound"    =(ctb[,-1]-ctb[,-dim(ctb)[2]])/ctb[,-dim(ctb)[2]]))
+
+dat=transform(dat,Quantity=ifelse(qname%in%c("SSB","SSB Bound"),"SSB","Change in Catch"))
+dat=transform(dat,Bound   =qname%in%c("SSB","No Bound"))
+
+ggplot(dat)+
+  geom_line(aes(year,data,col=Bound))+
+  facet_grid(Quantity~.,scale="free")+
+  theme_bw(16)+xlab("Year")+ylab("")+
+  geom_hline(aes(yintercept=y),col="red",
+           data=data.frame(y=c(2.25e6,0),
+           Quantity=c("SSB","Change in Catch")))+
+  scale_color_manual("Bounds",values=rainbow(10)[c(4,9)])+
+  theme(legend.position="bottom")
+```
+
+**Figure `r iFig =iFig +1; iFig `** `r lFig[iFig ]`
 
 ```{r, fig.height=10,fig.width=8, dpi=100}
 load(file.path(dirDat,"escape.RData"))
